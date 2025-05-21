@@ -61,6 +61,7 @@ model User {
 
   accounts Account[]
   sessions Session[]
+  invoiceDrafts InvoiceDraft[]
 
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
@@ -78,3 +79,39 @@ model VerificationToken {
   @@unique([identifier, token])
   @@map(name: "verification_tokens")
 }
+
+model InvoiceDraft {
+  id            String    @id @default(cuid())
+  userId        String
+  status        DraftStatus @default(IN_PROGRESS)
+  type          InvoiceType @default(INVOICE)
+
+  aiSessionId   String?   // Optional: Track AI session ID if needed
+  freelancerInfo Json?    // JSONB structure for freelancer info
+  clientInfo     Json?    // JSONB structure for client info
+  invoiceDetails Json?    // JSONB structure: issue date, due date, currency, etc.
+  lineItems      Json?    // JSONB structure: items with description, quantity, rate
+  paymentTerms   Json?    // JSONB structure: method, depositRequired, amount
+  customNote   String?    // Optional: Note to client
+
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map(name: "invoice_drafts")
+}
+
+enum DraftStatus {
+  IN_PROGRESS
+  COMPLETE
+  CANCELLED
+}
+
+enum InvoiceType {
+  INVOICE
+  QUOTE
+  PROFORMA
+}
+

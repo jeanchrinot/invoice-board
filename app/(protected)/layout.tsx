@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { sidebarLinks } from "@/config/dashboard";
 import { getCurrentUser } from "@/lib/session";
+import ChatWidget from "@/components/chat/chat-widget";
 import { SearchCommand } from "@/components/dashboard/search-command";
 import {
   DashboardSidebar,
@@ -51,6 +52,7 @@ export default async function Dashboard({ children }: ProtectedLayoutProps) {
           </MaxWidthWrapper>
         </main>
       </div>
+      <ChatWidget />
     </div>
   );
 }

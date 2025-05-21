@@ -9,6 +9,9 @@ export async function POST(req: Request) {
   const body = await req.text();
   const signature = headers().get("Stripe-Signature") as string;
 
+  console.log("Signature:", signature);
+  console.log("Raw body:", body.slice(0, 100)); // just first 100 chars
+
   let event: Stripe.Event;
 
   try {

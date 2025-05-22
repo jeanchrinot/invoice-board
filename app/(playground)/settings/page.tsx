@@ -24,7 +24,7 @@ export default async function SettingsPage() {
         <div className="lg:p-8">
           <HomeHero />
         </div>
-        <div className="h-full flex-col bg-white px-4 pt-10 lg:block">
+        <div className="h-full flex-col bg-background px-4 pt-10 lg:block">
           <h2 className="mb-4 text-balance text-center font-urban text-xl font-extrabold tracking-tight sm:text-2xl md:text-2xl">
             Settings{" "}
           </h2>

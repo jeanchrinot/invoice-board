@@ -43,8 +43,8 @@ const InvoiceTable = () => {
         or update an existing one.
       </p>
       <div className="w-full overflow-x-auto">
-        <table className="w-full table-auto rounded-lg border border-gray-200 shadow-sm">
-          <thead className="bg-gray-100 text-sm font-medium text-gray-700">
+        <table className="w-full table-auto rounded-lg border shadow-sm dark:border-background">
+          <thead className="bg-background text-sm font-medium">
             <tr>
               <th className="px-4 py-3 text-left">Invoice #</th>
               <th className="px-4 py-3 text-left">Client</th>

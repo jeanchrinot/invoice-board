@@ -83,7 +83,7 @@ export default function ChatWidget() {
   return (
     <div className="relative">
       {isOpen ? (
-        <div className="fixed bottom-0 right-0 z-50 flex h-screen w-screen flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900 md:bottom-4 md:right-4 md:h-[550px] md:w-[350px]">
+        <div className="fixed bottom-0 right-0 z-50 flex h-[97vh] max-h-screen w-screen flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900 md:bottom-4 md:right-4 md:h-[550px] md:w-[350px]">
           {/* Header */}
           <div className="relative flex items-center justify-between border-b p-4 dark:border-zinc-800">
             <div>
@@ -127,6 +127,16 @@ export default function ChatWidget() {
                             <ReactMarkdown
                               remarkPlugins={[remarkGfm]}
                               rehypePlugins={[rehypeRaw, rehypeHighlight]}
+                              components={{
+                                a: ({ node, ...props }) => (
+                                  <a
+                                    {...props}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 underline hover:text-blue-800"
+                                  />
+                                ),
+                              }}
                             >
                               {part.text}
                             </ReactMarkdown>

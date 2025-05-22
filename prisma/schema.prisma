@@ -86,6 +86,8 @@ model InvoiceDraft {
   status        DraftStatus @default(IN_PROGRESS)
   type          InvoiceType @default(INVOICE)
 
+  invoiceNumber   String?
+
   aiSessionId   String?   // Optional: Track AI session ID if needed
   freelancerInfo Json?    // JSONB structure for freelancer info
   clientInfo     Json?    // JSONB structure for client info
@@ -107,6 +109,9 @@ enum DraftStatus {
   IN_PROGRESS
   COMPLETE
   CANCELLED
+  OVERDUE
+  PAID
+  SENT
 }
 
 enum InvoiceType {

@@ -24,7 +24,8 @@ export default function ChatWidget() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
     useChat({ maxSteps: 10 });
 
-  const { invoiceId, setInvoiceId, fetchDraft } = useInvoiceDraftStore();
+  const { invoiceId, setInvoiceId, fetchDraft, fetchAllDrafts } =
+    useInvoiceDraftStore();
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -62,25 +63,39 @@ export default function ChatWidget() {
   // }, [isDraftComplete, isDraftPreviewed, invoiceId]);
 
   useEffect(() => {
+    fetchAllDrafts();
     if (invoiceId) {
       fetchDraft();
-      const invoicePreviewUrl = `/dashboard/invoice/${invoiceId}`;
-      if (pathname !== invoicePreviewUrl) {
-        router.push(invoicePreviewUrl);
-      }
+      // let invoicePreviewUrl = `/invoice/${invoiceId}`;
+      // if (pathname.includes("/dashboard")) {
+      //   invoicePreviewUrl = `/dashboard/invoice/${invoiceId}`;
+      //   if (pathname !== invoicePreviewUrl) {
+      //     router.push(invoicePreviewUrl);
+      //   }
+      // } else {
+      //   // Open the invoice preview in a new tab
+      //   const newTab = window.open(invoicePreviewUrl, "_blank");
+      //   newTab?.focus();
+      // }
     }
   }, [draftLastUpdated, invoiceId]);
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="relative">
       {isOpen ? (
-        <div className="flex h-[500px] w-[350px] flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900">
+        <div className="fixed bottom-0 right-0 z-50 flex h-screen w-screen flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900 md:bottom-4 md:right-4 md:h-[550px] md:w-[350px]">
           {/* Header */}
-          <div className="flex items-center justify-between border-b p-4 dark:border-zinc-800">
-            <h2 className="text-lg font-semibold">AI Assistant</h2>
+          <div className="relative flex items-center justify-between border-b p-4 dark:border-zinc-800">
+            <div>
+              <h2 className="text-lg font-semibold">AI Assistant</h2>
+              <span className="text-xs">
+                👋 Hi, I'm your AI assistant. You can ask me to create a new
+                invoice, update, or manage an existing one.
+              </span>
+            </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="rounded p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              className="absolute right-1 top-1 rounded-full p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
             >
               <X className="h-5 w-5" />
             </button>
@@ -155,13 +170,21 @@ export default function ChatWidget() {
           </form>
         </div>
       ) : (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="rounded-full bg-blue-600 p-3 text-white shadow-lg transition hover:bg-blue-700"
-          aria-label="Open Chat"
-        >
-          <MessageCircle className="h-5 w-5" />
-        </button>
+        <div className="fixed bottom-4 right-4 z-50">
+          <span
+            className="absolute -top-5 right-0 w-[200px] text-xs"
+            onClick={() => setIsOpen(true)}
+          >
+            👋 Hi, I'm your AI assistant.
+          </span>
+          <button
+            onClick={() => setIsOpen(true)}
+            className="rounded-full bg-blue-600 p-3 text-white shadow-lg transition hover:bg-blue-700"
+            aria-label="Open Chat"
+          >
+            <MessageCircle className="h-5 w-5" />
+          </button>
+        </div>
       )}
     </div>
   );

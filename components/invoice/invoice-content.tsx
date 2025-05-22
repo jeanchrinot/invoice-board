@@ -17,7 +17,7 @@ export default function InvoiceContent() {
   return (
     <div className="rounded-md bg-white p-8 text-sm leading-snug text-gray-800 shadow">
       {/* Header */}
-      {draft.status === "COMPLETED" && (
+      {draft.status === "PAID" && (
         <div className="mb-4 text-right">
           <span className="border border-b border-green-600 px-4 py-1 text-sm font-medium uppercase text-green-600">
             {draft.status}
@@ -38,9 +38,7 @@ export default function InvoiceContent() {
           <p className="mb-2 text-xl font-bold text-gray-900">Invoice</p>
           <div>
             Invoice #:{" "}
-            <span className="font-medium">
-              {draft?.invoiceDetails?.invoiceNumber}
-            </span>
+            <span className="font-medium">{draft?.invoiceNumber}</span>
           </div>
           <div>
             Date:{" "}
@@ -76,6 +74,10 @@ export default function InvoiceContent() {
           <p className="mb-2 font-semibold">Payment Details</p>
           <div className="whitespace-pre-line">
             {draft?.paymentTerms?.paymentMethod}
+            <br />
+            {draft?.paymentTerms?.depositAmount
+              ? `Deposit required: ${draft?.invoiceDetails?.currency} ${draft?.paymentTerms?.depositAmount}`
+              : ""}
           </div>
         </div>
       </div>

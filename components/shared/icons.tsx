@@ -1,5 +1,6 @@
 import {
   AlertTriangle,
+  ArrowDownToLine,
   ArrowRight,
   ArrowUpRight,
   BookOpen,
@@ -48,6 +49,7 @@ export const Icons = {
   copy: Copy,
   dashboard: LayoutPanelLeft,
   ellipsis: MoreVertical,
+  download: ArrowDownToLine,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

@@ -1,12 +1,17 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { allPages } from "contentlayer/generated";
 
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 import { Mdx } from "@/components/content/mdx-components";
+import { Icons } from "@/components/shared/icons";
 
 import "@/styles/mdx.css";
 
 import { Metadata } from "next";
 
+import { siteConfig } from "@/config/site";
 import { constructMetadata, getBlurDataURL } from "@/lib/utils";
 
 export async function generateStaticParams() {
@@ -28,7 +33,7 @@ export async function generateMetadata({
   const { title, description } = page;
 
   return constructMetadata({
-    title: `${title} – SaaS Starter`,
+    title: `${title} | ${siteConfig.name}`,
     description: description,
   });
 }
@@ -55,6 +60,18 @@ export default async function PagePage({
 
   return (
     <article className="container max-w-3xl py-6 lg:py-12">
+      <Link
+        href="/"
+        className={cn(
+          buttonVariants({ variant: "outline", size: "sm" }),
+          "absolute left-4 top-4 md:left-8 md:top-8",
+        )}
+      >
+        <>
+          <Icons.chevronLeft className="mr-2 size-4" />
+          Back
+        </>
+      </Link>
       <div className="space-y-4">
         <h1 className="inline-block font-heading text-4xl lg:text-5xl">
           {page.title}

@@ -3,9 +3,11 @@ import { create } from "zustand";
 interface InvoiceDraftStore {
   invoiceId: string | null;
   draft: any | null;
+  drafts: any[] | [];
   loading: boolean;
   setInvoiceId: (id: string) => void;
   fetchDraft: () => Promise<void>;
+  fetchAllDrafts: () => Promise<void>;
 
   // Optional: derived getters
   freelancer: Record<string, any>;
@@ -23,7 +25,7 @@ export const useInvoiceDraftStore = create<InvoiceDraftStore>((set, get) => ({
   invoiceId: null,
   draft: null,
   loading: false,
-
+  drafts: [],
   setInvoiceId: (id) => set({ invoiceId: id }),
 
   fetchDraft: async () => {
@@ -40,6 +42,22 @@ export const useInvoiceDraftStore = create<InvoiceDraftStore>((set, get) => ({
     } catch (err) {
       console.error(err);
       set({ draft: null });
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  fetchAllDrafts: async () => {
+    set({ loading: true });
+
+    try {
+      const res = await fetch(`/api/invoice`);
+      if (!res.ok) throw new Error("Failed to fetch drafts");
+      const data = await res.json();
+      set({ drafts: data });
+    } catch (err) {
+      console.error(err);
+      set({ drafts: [] });
     } finally {
       set({ loading: false });
     }

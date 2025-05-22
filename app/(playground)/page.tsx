@@ -19,7 +19,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <div className="container w-full w-screen flex-col items-center justify-center bg-muted lg:grid lg:h-screen lg:max-w-none lg:grid-cols-2 lg:px-0">
+      <div className="container w-screen flex-col items-center justify-center bg-muted lg:grid lg:h-screen lg:max-w-none lg:grid-cols-2 lg:px-0">
         <div className="lg:p-8">
           <HomeHero />
         </div>

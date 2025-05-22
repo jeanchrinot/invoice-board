@@ -11,9 +11,7 @@ const InvoiceTable = () => {
 
   useEffect(() => {
     fetchAllDrafts();
-  }, []);
-
-  console.log("drafts", drafts);
+  }, [fetchAllDrafts]);
 
   if (loading)
     return (

@@ -19,7 +19,7 @@ export default function InvoiceContent() {
       {/* Header */}
       {draft.status === "PAID" && (
         <div className="mb-4 text-right">
-          <span className="border border-b border-green-600 px-4 py-1 text-sm font-medium uppercase text-green-600">
+          <span className="border border-green-600 px-4 py-1 text-sm font-medium uppercase text-green-600">
             {draft.status}
           </span>
         </div>

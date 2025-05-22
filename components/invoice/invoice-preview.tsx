@@ -21,7 +21,7 @@ export default function InvoicePreview() {
       setInvoiceId(draftId);
       fetchDraft();
     }
-  }, [draftId]);
+  }, [draftId, setInvoiceId, fetchDraft]);
 
   if (loading) return <p>Loading invoice draft...</p>;
   if (!draft) return <p>Invoice draft not found</p>;

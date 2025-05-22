@@ -53,7 +53,7 @@ export default function ChatWidget() {
         }
       }
     }
-  }, [messages]);
+  }, [messages, setInvoiceId, setDraftLastUpdated]);
 
   // useEffect(() => {
   //   if (isDraftComplete && !isDraftPreviewed && invoiceId) {
@@ -78,7 +78,7 @@ export default function ChatWidget() {
       //   newTab?.focus();
       // }
     }
-  }, [draftLastUpdated, invoiceId]);
+  }, [draftLastUpdated, invoiceId, fetchDraft, fetchAllDrafts]);
 
   return (
     <div className="relative">
@@ -89,15 +89,15 @@ export default function ChatWidget() {
             <div>
               <h2 className="text-lg font-semibold">AI Assistant</h2>
               <span className="text-xs">
-                👋 Hi, I'm your AI assistant. You can ask me to create a new
-                invoice, update, or manage an existing one.
+                {`👋 Hi, I'm your AI assistant. You can ask me to create a new
+                invoice, update, or manage an existing one.`}
               </span>
             </div>
             <button
               onClick={() => setIsOpen(false)}
               className="absolute right-1 top-1 rounded-full p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800"
             >
-              <X className="h-5 w-5" />
+              <X className="size-5" />
             </button>
           </div>
 
@@ -125,10 +125,11 @@ export default function ChatWidget() {
                         return (
                           <div key={`${message.id}-${i}`}>
                             <ReactMarkdown
-                              children={part.text}
                               remarkPlugins={[remarkGfm]}
                               rehypePlugins={[rehypeRaw, rehypeHighlight]}
-                            />
+                            >
+                              {part.text}
+                            </ReactMarkdown>
                           </div>
                         );
                       // case "tool-invocation":
@@ -175,14 +176,14 @@ export default function ChatWidget() {
             className="absolute -top-5 right-0 w-[200px] text-xs"
             onClick={() => setIsOpen(true)}
           >
-            👋 Hi, I'm your AI assistant.
+            {`👋 Hi, I'm your AI assistant.`}
           </span>
           <button
             onClick={() => setIsOpen(true)}
             className="rounded-full bg-blue-600 p-3 text-white shadow-lg transition hover:bg-blue-700"
             aria-label="Open Chat"
           >
-            <MessageCircle className="h-5 w-5" />
+            <MessageCircle className="size-5" />
           </button>
         </div>
       )}

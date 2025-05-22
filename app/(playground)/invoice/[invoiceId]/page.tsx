@@ -13,7 +13,7 @@ export const metadata = constructMetadata({
 
 export default function InvoicePreviewPage() {
   return (
-    <div className="container flex grid w-screen items-center justify-center pb-16 pt-16">
+    <div className="container flex w-screen items-center justify-center py-16">
       {/* <div className="hidden lg:block lg:p-8">
         <HomeHero />
       </div> */}

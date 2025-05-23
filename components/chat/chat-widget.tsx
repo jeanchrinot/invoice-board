@@ -4,13 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useInvoiceDraftStore } from "@/stores/invoiceStore";
 import { useChat } from "@ai-sdk/react";
-import { MessageCircle, X } from "lucide-react";
+import { MessageCircle, Send, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 
 import { cn } from "@/lib/utils";
+
+import VoiceRecorder from "./voice-recorder";
 
 export default function ChatWidget() {
   const router = useRouter();
@@ -24,8 +26,14 @@ export default function ChatWidget() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
     useChat({ maxSteps: 10 });
 
-  const { invoiceId, setInvoiceId, fetchDraft, fetchAllDrafts } =
-    useInvoiceDraftStore();
+  const {
+    invoiceId,
+    transcript,
+    setTranscript,
+    setInvoiceId,
+    fetchDraft,
+    fetchAllDrafts,
+  } = useInvoiceDraftStore();
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -55,28 +63,27 @@ export default function ChatWidget() {
     }
   }, [messages, setInvoiceId, setDraftLastUpdated]);
 
-  // useEffect(() => {
-  //   if (isDraftComplete && !isDraftPreviewed && invoiceId) {
-  //     router.push(`/dashboard/invoice/${invoiceId}`);
-  //     setIsDraftPreviewed(true);
-  //   }
-  // }, [isDraftComplete, isDraftPreviewed, invoiceId]);
+  useEffect(() => {
+    if (transcript.trim()) {
+      // Manually update input state
+      const fakeEvent = {
+        target: { value: transcript },
+      } as unknown as React.ChangeEvent<HTMLInputElement>;
+
+      handleInputChange(fakeEvent);
+
+      // Wait a moment to ensure input state is updated
+      setTimeout(() => {
+        handleSubmit(new Event("submit"));
+        setTranscript(""); // Clear after submit to avoid resubmission
+      }, 100); // 100ms delay to ensure state updates before submit
+    }
+  }, [transcript, handleSubmit]);
 
   useEffect(() => {
     fetchAllDrafts();
     if (invoiceId) {
       fetchDraft();
-      // let invoicePreviewUrl = `/invoice/${invoiceId}`;
-      // if (pathname.includes("/dashboard")) {
-      //   invoicePreviewUrl = `/dashboard/invoice/${invoiceId}`;
-      //   if (pathname !== invoicePreviewUrl) {
-      //     router.push(invoicePreviewUrl);
-      //   }
-      // } else {
-      //   // Open the invoice preview in a new tab
-      //   const newTab = window.open(invoicePreviewUrl, "_blank");
-      //   newTab?.focus();
-      // }
     }
   }, [draftLastUpdated, invoiceId, fetchDraft, fetchAllDrafts]);
 
@@ -168,14 +175,15 @@ export default function ChatWidget() {
                 value={input}
                 onChange={handleInputChange}
                 placeholder="Type a message..."
-                className="flex-1 rounded-full border border-zinc-300 px-3 py-2 text-sm focus:outline-none dark:border-zinc-700 dark:bg-zinc-800"
+                className="flex-1 rounded-md border border-zinc-300 px-3 py-2 text-sm focus:outline-none dark:border-zinc-700 dark:bg-zinc-800"
               />
+              <VoiceRecorder />
               <button
                 type="submit"
                 disabled={isLoading || !input.trim()}
-                className="rounded-full bg-blue-600 px-3 py-2 text-sm text-white transition hover:bg-blue-700"
+                className="rounded-md bg-blue-600 px-2 py-2 text-sm text-white transition hover:bg-blue-700"
               >
-                {isLoading ? "..." : "Send"}
+                <Send className="size-5" />
               </button>
             </div>
           </form>

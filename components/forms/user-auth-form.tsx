@@ -72,6 +72,7 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
               autoCorrect="off"
               disabled={isLoading || isGoogleLoading}
               {...register("email")}
+              className="border-gray-400 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:border-gray-100"
             />
             {errors?.email && (
               <p className="px-1 text-xs text-red-600">

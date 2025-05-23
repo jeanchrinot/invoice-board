@@ -5,9 +5,13 @@ interface InvoiceDraftStore {
   draft: any | null;
   drafts: any[] | [];
   loading: boolean;
+  // Speech Recognition
+  transcript: string;
+
   setInvoiceId: (id: string) => void;
   fetchDraft: () => Promise<void>;
   fetchAllDrafts: () => Promise<void>;
+  setTranscript: (transcript: string) => void;
 
   // Optional: derived getters
   freelancer: Record<string, any>;
@@ -26,6 +30,7 @@ export const useInvoiceDraftStore = create<InvoiceDraftStore>((set, get) => ({
   draft: null,
   loading: false,
   drafts: [],
+  transcript: "",
   setInvoiceId: (id) => set({ invoiceId: id }),
 
   fetchDraft: async () => {
@@ -62,6 +67,8 @@ export const useInvoiceDraftStore = create<InvoiceDraftStore>((set, get) => ({
       set({ loading: false });
     }
   },
+
+  setTranscript: (transcript) => set({ transcript }),
 
   // Derived fields — update automatically when `draft` updates
   get freelancer() {

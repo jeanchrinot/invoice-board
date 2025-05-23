@@ -79,6 +79,7 @@
     "react-email": "2.1.5",
     "react-hook-form": "^7.52.1",
     "react-markdown": "^10.1.0",
+    "react-speech-recognition": "^4.0.1",
     "react-textarea-autosize": "^8.5.3",
     "recharts": "^2.12.7",
     "rehype-highlight": "^7.0.2",

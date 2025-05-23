@@ -32,6 +32,7 @@ const VoiceRecorder = () => {
   return (
     <div className="flex items-center justify-center">
       <button
+        type="button"
         onClick={toggleRecording}
         className={`rounded-md p-2 shadow transition-all duration-1000 ${
           listening

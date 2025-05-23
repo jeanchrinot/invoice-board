@@ -90,7 +90,7 @@ export default function ChatWidget() {
   return (
     <div className="relative">
       {isOpen ? (
-        <div className="fixed bottom-0 right-0 z-50 flex h-[97vh] max-h-screen w-screen flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900 md:bottom-4 md:right-4 md:h-[550px] md:w-[350px]">
+        <div className="fixed bottom-0 right-0 z-50 flex h-[100dvh] max-h-screen min-h-[95vh] w-screen flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900 md:bottom-4 md:right-4 md:h-[550px] md:w-[350px]">
           {/* Header */}
           <div className="relative flex items-center justify-between border-b p-4 dark:border-zinc-800">
             <div>
@@ -177,7 +177,6 @@ export default function ChatWidget() {
                 placeholder="Type a message..."
                 className="flex-1 rounded-md border border-zinc-300 px-3 py-2 text-sm focus:outline-none dark:border-zinc-700 dark:bg-zinc-800"
               />
-              <VoiceRecorder />
               <button
                 type="submit"
                 disabled={isLoading || !input.trim()}
@@ -185,6 +184,7 @@ export default function ChatWidget() {
               >
                 <Send className="size-5" />
               </button>
+              <VoiceRecorder />
             </div>
           </form>
         </div>

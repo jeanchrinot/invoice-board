@@ -24,8 +24,16 @@ export async function POST(req: Request) {
   const result = streamText({
     model: openai("gpt-4o"),
     messages,
-    system:
-      "You are helping a freelancer manage invoices. You can update invoice drafts or create new ones using tools. When creating a new invoice, the system will automatically prefill common information (freelancer details, payment terms, currency, tax rate) from previous invoices to save time. For client information, you can offer to reuse details from previous clients by using the getAvailableClients tool and copyClientFromPrevious tool. Always ask the user if they'd like to use a previous client or add a new one. After creating or updating an invoice, use the appropriate tool to create preview link. The workflow is: 1) Create draft (with prefill), 2) Handle client info (offer previous clients), 3) Add/update invoice details (dates), 4) Add line items, 5) Create preview link.",
+    system: `You are helping a freelancer manage invoices. You can update invoice drafts or create new ones using tools. 
+       When creating a new invoice, if there are previously created invoices, 
+       the system will automatically prefill common information 
+       (freelancer details, payment terms, currency, tax rate) from previous invoices to save time, 
+       otherwise you must collect them with tools. 
+       For client information, you can offer to reuse details from previous clients 
+       by using the getAvailableClients tool and copyClientFromPrevious tool. 
+       Always ask the user if they'd like to use a previous client or add a new one. 
+       After creating or updating an invoice, use the appropriate tool to create preview link. 
+       The workflow: 1) Create new draft. 2) Get freelancer info. 3) Get client info. 4) Get invoice details. 5) Get line items. 6) Get payment terms.`,
     tools: invoiceTools,
   });
 

@@ -55,6 +55,113 @@ export async function createInvoiceDraft(
   return draft;
 }
 
+// NEW: Create invoice draft with prefilled data from previous invoices
+export async function createInvoiceDraftWithPrefill(
+  userId: string,
+  type: InvoiceType = "INVOICE",
+) {
+  const invoiceCount = await prisma.invoiceDraft.count({
+    where: { userId },
+  });
+
+  const invoiceNumber = generateInvoiceNumber("INV", invoiceCount);
+
+  // Get the most recent complete invoice to use as template
+  const templateInvoice = await getLatestCompleteInvoice(userId);
+
+  const prefillData: any = {};
+
+  if (templateInvoice) {
+    // Prefill freelancer info (always the same)
+    if (templateInvoice.freelancerInfo) {
+      prefillData.freelancerInfo = templateInvoice.freelancerInfo;
+    }
+
+    // Prefill payment terms (usually the same)
+    if (templateInvoice.paymentTerms) {
+      prefillData.paymentTerms = templateInvoice.paymentTerms;
+    }
+
+    // Prefill currency, tax, and issue date from invoice details
+    if (templateInvoice.invoiceDetails) {
+      const today = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
+
+      prefillData.invoiceDetails = {
+        currency: templateInvoice.invoiceDetails["currency"],
+        tax: templateInvoice.invoiceDetails["tax"],
+        issueDate: today, // Always set to today
+        // Don't prefill dueDate - user should specify based on their agreement
+      };
+    }
+  }
+
+  const draft = await prisma.invoiceDraft.create({
+    data: {
+      userId,
+      type,
+      status: DraftStatus.IN_PROGRESS,
+      invoiceNumber,
+      ...prefillData,
+    },
+  });
+
+  return draft;
+}
+
+// NEW: Get the latest complete invoice for prefilling
+export async function getLatestCompleteInvoice(userId: string) {
+  return prisma.invoiceDraft.findFirst({
+    where: {
+      userId,
+      status: {
+        in: [DraftStatus.COMPLETE, DraftStatus.SENT, DraftStatus.PAID],
+      },
+      // Ensure it has the basic required fields
+      freelancerInfo: { not: Prisma.JsonNull },
+    },
+    orderBy: { updatedAt: "desc" },
+  });
+}
+
+// NEW: Get unique clients list for reuse
+export async function getUniqueClientsList(userId: string) {
+  const drafts = await prisma.invoiceDraft.findMany({
+    where: {
+      userId,
+      clientInfo: { not: Prisma.JsonNull },
+      status: {
+        in: [DraftStatus.COMPLETE, DraftStatus.SENT, DraftStatus.PAID],
+      },
+    },
+    select: {
+      clientInfo: true,
+    },
+    orderBy: { updatedAt: "desc" },
+  });
+
+  // Extract unique clients based on email (assuming email is unique identifier)
+  const uniqueClients = new Map();
+
+  drafts.forEach((draft) => {
+    if (draft.clientInfo && typeof draft.clientInfo === "object") {
+      const clientInfo = draft.clientInfo as any;
+      if (
+        clientInfo.clientEmail &&
+        !uniqueClients.has(clientInfo.clientEmail)
+      ) {
+        uniqueClients.set(clientInfo.clientEmail, {
+          clientName: clientInfo.clientName,
+          clientEmail: clientInfo.clientEmail,
+          clientPhone: clientInfo.clientPhone,
+          clientAddress: clientInfo.clientAddress,
+        });
+      }
+    }
+  });
+
+  return Array.from(uniqueClients.values());
+}
+
 export async function updateInvoiceDraftSection(
   draftId: string | undefined,
   section:

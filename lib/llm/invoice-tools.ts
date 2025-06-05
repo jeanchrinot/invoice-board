@@ -5,10 +5,13 @@ import { getSelectedDraft, setSelectedDraft } from "@/lib/ai-memory";
 import {
   countUserInvoiceDrafts,
   createInvoiceDraft,
+  createInvoiceDraftWithPrefill,
   createInvoicePreviewLink,
   deleteInvoiceDraft,
   findInvoiceDraft,
   findInvoiceDraftById,
+  getLatestCompleteInvoice,
+  getUniqueClientsList,
   updateInvoiceCustomNote,
   updateInvoiceDraftSection,
   updateInvoiceDraftStatus,
@@ -65,10 +68,21 @@ export function createInvoiceTools(userId: string) {
 
     createNewInvoiceDraft: tool({
       description:
-        "Create a new invoice blank draft. Use this when user wants to create an new invoice. You must gather information about the invoice later.",
-      parameters: z.object({}),
-      execute: async () => {
-        const draft = await createInvoiceDraft(userId, "INVOICE");
+        "Create a new invoice blank draft. Use this when user wants to create a new invoice. You must gather information about the invoice later.",
+      parameters: z.object({
+        prefillFromPrevious: z
+          .boolean()
+          .default(true)
+          .describe("Whether to prefill common data from previous invoices"),
+      }),
+      execute: async ({ prefillFromPrevious = true }) => {
+        let draft;
+
+        if (prefillFromPrevious) {
+          draft = await createInvoiceDraftWithPrefill(userId, "INVOICE");
+        } else {
+          draft = await createInvoiceDraft(userId, "INVOICE");
+        }
 
         if (!draft) {
           return {
@@ -78,9 +92,85 @@ export function createInvoiceTools(userId: string) {
 
         setSelectedDraft(userId || "", draft.id);
 
+        const prefilledFields: string[] = [];
+        if (draft.freelancerInfo) prefilledFields.push("freelancer info");
+        if (draft.paymentTerms) prefilledFields.push("payment terms");
+        if (draft.invoiceDetails?.currency) prefilledFields.push("currency");
+        if (draft.invoiceDetails?.tax) prefilledFields.push("tax rate");
+
+        const message =
+          prefilledFields.length > 0
+            ? `Created invoice draft with prefilled ${prefilledFields.join(", ")} from your previous invoices.`
+            : `Created a blank invoice draft.`;
+
         return {
-          message: `Created the invoice draft.`,
+          message,
           draftId: draft.id,
+          prefilledFields,
+        };
+      },
+    }),
+
+    getAvailableClients: tool({
+      description:
+        "Get list of previous clients to offer for reuse. Use this when user is adding client info to suggest previous clients.",
+      parameters: z.object({}),
+      execute: async () => {
+        const clients = await getUniqueClientsList(userId);
+        return {
+          message: `Found ${clients.length} previous clients`,
+          clients: clients.map((client) => ({
+            name: client.clientName,
+            email: client.clientEmail,
+            phone: client.clientPhone,
+            address: client.clientAddress,
+          })),
+        };
+      },
+    }),
+
+    copyClientFromPrevious: tool({
+      description:
+        "Copy client information from a previous invoice by client name or email.",
+      parameters: z.object({
+        clientIdentifier: z
+          .string()
+          .describe("Client name or email to search for"),
+      }),
+      execute: async ({ clientIdentifier }) => {
+        if (!draftId) {
+          return "Please specify invoice ID.";
+        }
+
+        const clients = await getUniqueClientsList(userId);
+        const matchingClient = clients.find(
+          (client) =>
+            client.clientName
+              ?.toLowerCase()
+              .includes(clientIdentifier.toLowerCase()) ||
+            client.clientEmail
+              ?.toLowerCase()
+              .includes(clientIdentifier.toLowerCase()),
+        );
+
+        if (!matchingClient) {
+          return {
+            message: `No previous client found matching "${clientIdentifier}". Available clients: ${clients.map((c) => c.clientName).join(", ")}`,
+          };
+        }
+
+        const clientData = {
+          clientName: matchingClient.clientName,
+          clientEmail: matchingClient.clientEmail,
+          clientPhone: matchingClient.clientPhone,
+          clientAddress: matchingClient.clientAddress,
+        };
+
+        await updateInvoiceDraftSection(draftId, "clientInfo", clientData);
+
+        return {
+          message: `Copied client information for ${matchingClient.clientName}`,
+          clientData,
         };
       },
     }),
@@ -121,17 +211,24 @@ export function createInvoiceTools(userId: string) {
     }),
 
     getInvoiceDetails: tool({
-      description: "Collect dates, currency, and tax (percentage)",
+      description:
+        "Collect due date, and optionally update currency and tax if needed. Issue date is automatically set to today.",
       parameters: z.object({
-        issueDate: z.string().date(),
         dueDate: z.string().date(),
-        currency: z.enum(["USD", "EUR", "GBP", "TRY", "INR"]),
+        currency: z.enum(["USD", "EUR", "GBP", "TRY", "INR"]).optional(),
         tax: z.number().optional(),
+        issueDate: z.string().date().optional(),
       }),
       execute: async (data) => {
         if (!draftId) {
           return "Please specify invoice ID.";
         }
+
+        // If issue date is not provided, use today's date
+        if (!data.issueDate) {
+          data.issueDate = new Date().toISOString().split("T")[0];
+        }
+
         await updateInvoiceDraftSection(draftId, "invoiceDetails", data);
         return await withDraftCheck(draftId, data);
       },

@@ -88,7 +88,7 @@ model InvoiceDraft {
 
   invoiceNumber   String?
 
-  aiSessionId   String?   // Optional: Track AI session ID if needed
+  aiSessionId   String?   // Track AI session ID. To be implemented later
   freelancerInfo Json?    // JSONB structure for freelancer info
   clientInfo     Json?    // JSONB structure for client info
   invoiceDetails Json?    // JSONB structure: issue date, due date, currency, etc.

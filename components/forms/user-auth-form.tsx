@@ -21,6 +21,12 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
 
 type FormData = z.infer<typeof userAuthSchema>;
 
+const otpSchema = z.object({
+  otp: z.string().length(6, "OTP must be 6 digits"),
+});
+
+type OTPFormData = z.infer<typeof otpSchema>;
+
 export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
   const {
     register,
@@ -29,30 +35,151 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
   } = useForm<FormData>({
     resolver: zodResolver(userAuthSchema),
   });
+
+  const {
+    register: registerOTP,
+    handleSubmit: handleSubmitOTP,
+    formState: { errors: otpErrors },
+  } = useForm<OTPFormData>({
+    resolver: zodResolver(otpSchema),
+  });
+
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false);
+  const [showOTPInput, setShowOTPInput] = React.useState<boolean>(false);
+  const [userEmail, setUserEmail] = React.useState<string>("");
   const searchParams = useSearchParams();
 
   async function onSubmit(data: FormData) {
     setIsLoading(true);
+    setUserEmail(data.email.toLowerCase());
 
-    const signInResult = await signIn("resend", {
-      email: data.email.toLowerCase(),
-      redirect: false,
-      callbackUrl: searchParams?.get("from") || "/",
-    });
-
-    setIsLoading(false);
-
-    if (!signInResult?.ok) {
-      return toast.error("Something went wrong.", {
-        description: "Your sign in request failed. Please try again.",
+    try {
+      // Use the OTP provider from NextAuth
+      const signInResult = await signIn("resend-otp", {
+        email: data.email.toLowerCase(),
+        redirect: false,
       });
-    }
 
-    return toast.success("Check your email", {
-      description: "We sent you a login link. Be sure to check your spam too.",
-    });
+      if (!signInResult?.ok) {
+        throw new Error("Failed to send verification code");
+      }
+
+      setShowOTPInput(true);
+      toast.success("Check your email", {
+        description: "We sent you a 6-digit verification code.",
+      });
+    } catch (error) {
+      toast.error("Something went wrong.", {
+        description: "Failed to send verification code. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function onSubmitOTP(data: OTPFormData) {
+    setIsLoading(true);
+
+    try {
+      // Verify OTP through custom API endpoint
+      const response = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: userEmail,
+          otp: data.otp,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Invalid verification code");
+      }
+
+      // sign in the user
+      const signInResult = await signIn("otp-login", {
+        email: userEmail,
+        otp: data.otp,
+        redirect: false,
+        callbackUrl: searchParams?.get("from") || "/",
+      });
+
+      if (!signInResult?.ok) {
+        throw new Error("Sign in failed");
+      }
+
+      toast.success("Successfully signed in!");
+
+      // Redirect to callback URL
+      window.location.href = searchParams?.get("from") || "/";
+    } catch (error) {
+      toast.error("Invalid code", {
+        description:
+          error instanceof Error
+            ? error.message
+            : "Please check your code and try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const handleBackToEmail = () => {
+    setShowOTPInput(false);
+    setUserEmail("");
+  };
+
+  if (showOTPInput) {
+    return (
+      <div className={cn("grid gap-6", className)} {...props}>
+        <form onSubmit={handleSubmitOTP(onSubmitOTP)}>
+          <div className="grid gap-2">
+            <div className="grid gap-1">
+              <Label className="sr-only" htmlFor="otp">
+                Verification Code
+              </Label>
+              <Input
+                id="otp"
+                placeholder="Enter 6-digit code"
+                type="text"
+                autoCapitalize="none"
+                autoComplete="off"
+                autoCorrect="off"
+                disabled={isLoading}
+                maxLength={6}
+                {...registerOTP("otp")}
+                className="border-gray-400 text-center text-2xl tracking-widest focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:border-gray-100"
+              />
+              {otpErrors?.otp && (
+                <p className="px-1 text-xs text-red-600">
+                  {otpErrors.otp.message}
+                </p>
+              )}
+              <p className="px-1 text-xs text-muted-foreground">
+                We sent a code to {userEmail}
+              </p>
+            </div>
+            <button className={cn(buttonVariants())} disabled={isLoading}>
+              {isLoading && (
+                <Icons.spinner className="mr-2 size-4 animate-spin" />
+              )}
+              Verify Code
+            </button>
+            <button
+              type="button"
+              onClick={handleBackToEmail}
+              className={cn(buttonVariants({ variant: "ghost" }))}
+              disabled={isLoading}
+            >
+              Back to Email
+            </button>
+          </div>
+        </form>
+      </div>
+    );
   }
 
   return (

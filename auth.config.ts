@@ -71,12 +71,4 @@ export default {
       },
     }),
   ],
-
-  session: {
-    strategy: "jwt",
-  },
-
-  pages: {
-    signIn: "/", // Your custom OTP login form
-  },
 } satisfies NextAuthConfig;

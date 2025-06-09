@@ -49,6 +49,20 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
   const [showOTPInput, setShowOTPInput] = React.useState<boolean>(false);
   const [userEmail, setUserEmail] = React.useState<string>("");
   const searchParams = useSearchParams();
+  const otpInputRef = React.useRef<HTMLInputElement>(null);
+
+  // Clear and focus OTP input when shown
+  React.useEffect(() => {
+    if (showOTPInput && otpInputRef.current) {
+      // Small delay to ensure the component is fully rendered
+      setTimeout(() => {
+        if (otpInputRef.current) {
+          otpInputRef.current.value = "";
+          otpInputRef.current.focus();
+        }
+      }, 100);
+    }
+  }, [showOTPInput]);
 
   async function onSubmit(data: FormData) {
     setIsLoading(true);
@@ -135,23 +149,56 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
   if (showOTPInput) {
     return (
       <div className={cn("grid gap-6", className)} {...props}>
-        <form onSubmit={handleSubmitOTP(onSubmitOTP)}>
+        <form onSubmit={handleSubmitOTP(onSubmitOTP)} autoComplete="off">
           <div className="grid gap-2">
             <div className="grid gap-1">
+              {/* Hidden decoy input to trick autofill */}
+              <input
+                type="email"
+                autoComplete="username"
+                style={{
+                  position: "absolute",
+                  left: "-9999px",
+                  opacity: 0,
+                  pointerEvents: "none",
+                }}
+                tabIndex={-1}
+                aria-hidden="true"
+              />
               <Label className="sr-only" htmlFor="otp">
                 Verification Code
               </Label>
               <Input
+                {...registerOTP("otp")}
+                // ref={otpInputRef}
                 id="otp"
+                // name="verification-code" // Non-standard name
                 placeholder="Enter 6-digit code"
                 type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 autoCapitalize="none"
-                autoComplete="off"
+                autoComplete="one-time-code" // Specific for OTP
                 autoCorrect="off"
+                spellCheck={false}
                 disabled={isLoading}
                 maxLength={6}
-                {...registerOTP("otp")}
                 className="border-gray-400 text-center text-2xl tracking-widest focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:border-gray-100"
+                data-form-type="other" // Additional hint for browsers
+                // onPaste={(e) => {
+                //   // Handle paste events for OTP
+                //   const paste = e.clipboardData.getData("text");
+                //   if (paste && /^\d{6}$/.test(paste)) {
+                //     e.preventDefault();
+                //     if (otpInputRef.current) {
+                //       otpInputRef.current.value = paste;
+                //       // Trigger form validation
+                //       otpInputRef.current.dispatchEvent(
+                //         new Event("input", { bubbles: true }),
+                //       );
+                //     }
+                //   }
+                // }}
               />
               {otpErrors?.otp && (
                 <p className="px-1 text-xs text-red-600">

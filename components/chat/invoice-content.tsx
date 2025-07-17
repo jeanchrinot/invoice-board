@@ -1,0 +1,272 @@
+import React from "react";
+import { Download, Edit3, Receipt, Sparkles, Stars, Wand2 } from "lucide-react";
+
+// Define TypeScript interfaces
+interface InvoiceItem {
+  description: string;
+  quantity: number;
+  rate: number;
+  amount: number;
+}
+
+interface Invoice {
+  number: string;
+  date: string;
+  dueDate: string;
+  currency: string;
+  paymentDetails: string;
+  customNotes: string;
+  billTo: {
+    name: string;
+    address: string;
+    city: string;
+    state: string;
+    zip: string;
+    email: string;
+    phone: string;
+  };
+  from: {
+    name: string;
+    address: string;
+    city: string;
+    state: string;
+    zip: string;
+    email: string;
+    phone: string;
+  };
+  items: InvoiceItem[];
+  subtotal: number;
+  taxRate: number;
+  tax: number;
+  total: number;
+}
+
+interface InvoiceContentProps {
+  invoice?: Invoice;
+  isGenerating?: boolean;
+}
+
+const InvoiceContent: React.FC<InvoiceContentProps> = ({
+  invoice,
+  isGenerating,
+}) => {
+  if (isGenerating) {
+    return (
+      <div className="flex h-full items-center justify-center rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-100/20 via-blue-100/20 to-indigo-100/20 dark:from-purple-900/20 dark:via-blue-900/20 dark:to-indigo-900/20">
+        <div className="text-center">
+          <div className="relative mb-6">
+            <div className="mx-auto flex h-24 w-24 animate-pulse items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500">
+              <Wand2 className="h-12 w-12 animate-spin text-white" />
+            </div>
+            <div className="absolute -right-2 -top-2 flex h-6 w-6 animate-bounce items-center justify-center rounded-full bg-yellow-400">
+              <Sparkles className="h-4 w-4 text-yellow-900" />
+            </div>
+          </div>
+          <h3 className="mb-2 text-xl font-semibold text-gray-800 dark:text-white">
+            AI Magic in Progress...
+          </h3>
+          <p className="mb-4 text-gray-500 dark:text-gray-400">
+            Crafting your perfect invoice
+          </p>
+          <div className="flex justify-center space-x-1">
+            <div className="h-2 w-2 animate-bounce rounded-full bg-purple-500"></div>
+            <div
+              className="h-2 w-2 animate-bounce rounded-full bg-blue-500"
+              style={{ animationDelay: "0.1s" }}
+            ></div>
+            <div
+              className="k h-2 w-2 animate-bounce rounded-full bg-indigo-500"
+              style={{ animationDelay: "0.2s" }}
+            ></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!invoice) {
+    return (
+      <div className="flex h-[90%] items-center justify-center rounded-2xl border border-gray-300 bg-gradient-to-br from-gray-100/50 via-slate-100/50 to-gray-200/50 dark:border-gray-700/50 dark:from-gray-900/50 dark:via-slate-900/50 dark:to-gray-800/50">
+        <div className="max-w-md text-center">
+          <div className="relative mb-6">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-gray-400 to-gray-500 dark:from-gray-600 dark:to-gray-700">
+              <Receipt className="h-10 w-10 text-gray-600 dark:text-gray-400" />
+            </div>
+            <div className="absolute -right-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
+              <Stars className="h-4 w-4 text-white" />
+            </div>
+          </div>
+          <h3 className="mb-2 text-xl font-semibold text-gray-700 dark:text-gray-300">
+            Invoice Preview
+          </h3>
+          <p className="mb-6 text-gray-500 dark:text-gray-400">
+            Your AI-generated invoices will appear here like magic. Start by
+            asking me to create an invoice!
+          </p>
+          <div className="rounded-lg border border-gray-300 bg-white p-4 dark:border-gray-700/50 dark:bg-gray-800/50">
+            <p className="text-sm italic text-gray-500 dark:text-gray-400">
+              "Create an invoice for John Doe for web development services"
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="animate-fadeIn h-[90%] overflow-y-auto overflow-x-hidden bg-white shadow-2xl dark:bg-gray-900">
+      {/* Invoice Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white">
+        <div className="flex items-start justify-between">
+          <div>
+            <h2 className="text-2xl font-bold">INVOICE</h2>
+            <p className="text-blue-100">#{invoice.number}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-blue-100">Date: {invoice.date}</p>
+            <p className="text-blue-100">Due: {invoice.dueDate}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Invoice Content */}
+      <div className="space-y-6 p-6">
+        {/* Bill To and From Section */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <h3 className="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
+              Bill To:
+            </h3>
+            <div className="text-gray-600 dark:text-gray-400">
+              <p className="font-medium">{invoice.billTo.name}</p>
+              <p>{invoice.billTo.address}</p>
+              <p>
+                {invoice.billTo.city}, {invoice.billTo.state}{" "}
+                {invoice.billTo.zip}
+              </p>
+              <p>{invoice.billTo.email}</p>
+              <p>{invoice.billTo.phone}</p>
+            </div>
+          </div>
+          <div>
+            <h3 className="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
+              From:
+            </h3>
+            <div className="text-gray-600 dark:text-gray-400">
+              <p className="font-medium">{invoice.from.name}</p>
+              <p>{invoice.from.address}</p>
+              <p>
+                {invoice.from.city}, {invoice.from.state} {invoice.from.zip}
+              </p>
+              <p>{invoice.from.email}</p>
+              <p>{invoice.from.phone}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Items Table */}
+        <div>
+          <h3 className="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
+            Items:
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50 dark:bg-gray-800/50">
+                  <th className="p-3 text-left font-medium text-gray-700 dark:text-gray-300">
+                    Description
+                  </th>
+                  <th className="p-3 text-right font-medium text-gray-700 dark:text-gray-300">
+                    Qty
+                  </th>
+                  <th className="p-3 text-right font-medium text-gray-700 dark:text-gray-300">
+                    Rate
+                  </th>
+                  <th className="p-3 text-right font-medium text-gray-700 dark:text-gray-300">
+                    Amount
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {invoice.items.map((item, index) => (
+                  <tr
+                    key={index}
+                    className="border-b border-gray-200 dark:border-gray-700"
+                  >
+                    <td className="p-3 text-gray-800 dark:text-gray-200">
+                      {item.description}
+                    </td>
+                    <td className="p-3 text-right text-gray-800 dark:text-gray-200">
+                      {item.quantity}
+                    </td>
+                    <td className="p-3 text-right text-gray-800 dark:text-gray-200">
+                      {invoice.currency} {item.rate}
+                    </td>
+                    <td className="p-3 text-right text-gray-800 dark:text-gray-200">
+                      {invoice.currency} {item.amount}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Totals */}
+        <div className="flex justify-end">
+          <div className="w-64 space-y-2">
+            <div className="flex justify-between">
+              <span className="text-gray-600 dark:text-gray-400">
+                Subtotal:
+              </span>
+              <span className="text-gray-800 dark:text-gray-200">
+                {invoice.currency} {invoice.subtotal}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600 dark:text-gray-400">
+                Tax ({invoice.taxRate}%):
+              </span>
+              <span className="text-gray-800 dark:text-gray-200">
+                {invoice.currency} {invoice.tax}
+              </span>
+            </div>
+            <div className="flex justify-between border-t border-gray-200 pt-2 text-lg font-semibold dark:border-gray-700">
+              <span className="text-gray-800 dark:text-gray-200">Total:</span>
+              <span className="text-gray-800 dark:text-gray-200">
+                {invoice.currency} {invoice.total}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Payment Information */}
+        <div>
+          <h3 className="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
+            Payment Information:
+          </h3>
+          <div className="text-gray-600 dark:text-gray-400">
+            <p className="whitespace-pre-wrap">{invoice.paymentDetails}</p>
+            {invoice.customNotes && (
+              <p className="mt-2 italic">{invoice.customNotes}</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex justify-end space-x-3 bg-gray-50 p-4 dark:bg-gray-800/50">
+        <button className="flex items-center space-x-2 rounded-lg bg-gray-200 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+          <Edit3 className="h-4 w-4" />
+          <span>Edit</span>
+        </button>
+        <button className="flex items-center space-x-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700">
+          <Download className="h-4 w-4" />
+          <span>Download</span>
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default InvoiceContent;

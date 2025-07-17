@@ -4,6 +4,8 @@ import {
   ArrowRight,
   ArrowUpRight,
   BookOpen,
+  BookUser,
+  Bot,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -26,6 +28,9 @@ import {
   Package,
   Plus,
   Puzzle,
+  Receipt,
+  ReceiptEuro,
+  ReceiptText,
   Search,
   Settings,
   SunMedium,
@@ -38,6 +43,7 @@ export type Icon = LucideIcon;
 
 export const Icons = {
   add: Plus,
+  bot: Bot,
   arrowRight: ArrowRight,
   arrowUpRight: ArrowUpRight,
   billing: CreditCard,
@@ -50,6 +56,10 @@ export const Icons = {
   dashboard: LayoutPanelLeft,
   ellipsis: MoreVertical,
   download: ArrowDownToLine,
+  receipt: Receipt,
+  receiptText: ReceiptText,
+  receiptEuro: ReceiptEuro,
+  bookUser: BookUser,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

@@ -27,10 +27,7 @@ export function UserAccountNav() {
 
   const { isMobile } = useMediaQuery();
 
-  if (!user)
-    return (
-      <div className="size-8 animate-pulse rounded-full border bg-muted" />
-    );
+  if (!user) return <></>;
 
   if (isMobile) {
     return (

@@ -1,10 +1,12 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NavItem, SidebarNavItem } from "@/types";
 import { Menu, PanelLeftClose, PanelRightClose } from "lucide-react";
+import { useTheme } from "next-themes";
 
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
@@ -21,6 +23,8 @@ import {
 } from "@/components/ui/tooltip";
 import ProjectSwitcher from "@/components/dashboard/project-switcher";
 import { UpgradeCard } from "@/components/dashboard/upgrade-card";
+import { ModeToggle } from "@/components/layout/mode-toggle";
+import { UserAccountNav } from "@/components/layout/user-account-nav";
 import { Icons } from "@/components/shared/icons";
 
 interface DashboardSidebarProps {
@@ -29,6 +33,7 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ links }: DashboardSidebarProps) {
   const path = usePathname();
+  const { theme } = useTheme();
 
   // NOTE: Use this if you want save in local storage -- Credits: Hosna Qasmei
   //
@@ -60,9 +65,30 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
     setIsSidebarExpanded(!isTablet);
   }, [isTablet]);
 
+  const Logo = () => {
+    return (
+      <Link href="/" className="flex items-center space-x-1.5">
+        <Image
+          src="/InvoiceBoard-Logo.png"
+          className="hidden w-[170px] dark:block"
+          width={500}
+          height={94}
+          alt="InvoiceBoard Dark"
+        />
+        <Image
+          src="/InvoiceBoard-Logo-Light.png"
+          className="w-[170px] dark:hidden"
+          width={500}
+          height={94}
+          alt="InvoiceBoard Light"
+        />
+      </Link>
+    );
+  };
+
   return (
     <TooltipProvider delayDuration={0}>
-      <div className="sticky top-0 h-full">
+      <div className="sticky top-0 h-full bg-background dark:bg-black/20">
         <ScrollArea className="h-full overflow-y-auto border-r">
           <aside
             className={cn(
@@ -72,7 +98,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
           >
             <div className="flex h-full max-h-screen flex-1 flex-col gap-2">
               <div className="flex h-14 items-center p-4 lg:h-[60px]">
-                {isSidebarExpanded ? <ProjectSwitcher /> : null}
+                {isSidebarExpanded ? <Logo /> : null}
 
                 <Button
                   variant="ghost"
@@ -96,75 +122,85 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
               </div>
 
               <nav className="flex flex-1 flex-col gap-8 px-4 pt-4">
-                {links.map((section) => (
-                  <section
-                    key={section.title}
-                    className="flex flex-col gap-0.5"
-                  >
-                    {isSidebarExpanded ? (
-                      <p className="text-xs text-muted-foreground">
-                        {section.title}
-                      </p>
-                    ) : (
-                      <div className="h-4" />
-                    )}
-                    {section.items.map((item) => {
-                      const Icon = Icons[item.icon || "arrowRight"];
-                      return (
-                        item.href && (
-                          <Fragment key={`link-fragment-${item.title}`}>
-                            {isSidebarExpanded ? (
-                              <Link
-                                key={`link-${item.title}`}
-                                href={item.disabled ? "#" : item.href}
-                                className={cn(
-                                  "flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-muted",
-                                  path === item.href
-                                    ? "bg-muted"
-                                    : "text-muted-foreground hover:text-accent-foreground",
-                                  item.disabled &&
-                                    "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
-                                )}
-                              >
-                                <Icon className="size-5" />
-                                {item.title}
-                                {item.badge && (
-                                  <Badge className="ml-auto flex size-5 shrink-0 items-center justify-center rounded-full">
-                                    {item.badge}
-                                  </Badge>
-                                )}
-                              </Link>
-                            ) : (
-                              <Tooltip key={`tooltip-${item.title}`}>
-                                <TooltipTrigger asChild>
-                                  <Link
-                                    key={`link-tooltip-${item.title}`}
-                                    href={item.disabled ? "#" : item.href}
-                                    className={cn(
-                                      "flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-muted",
-                                      path === item.href
-                                        ? "bg-muted"
-                                        : "text-muted-foreground hover:text-accent-foreground",
-                                      item.disabled &&
-                                        "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
-                                    )}
-                                  >
-                                    <span className="flex size-full items-center justify-center">
-                                      <Icon className="size-5" />
-                                    </span>
-                                  </Link>
-                                </TooltipTrigger>
-                                <TooltipContent side="right">
+                <ModeToggle />
+                {links.map((section) => {
+                  if (section.items?.length == 0) return;
+                  return (
+                    <section
+                      key={section.title}
+                      className="flex flex-col gap-0.5"
+                    >
+                      {isSidebarExpanded ? (
+                        <p className="text-xs text-muted-foreground">
+                          {section.title}
+                        </p>
+                      ) : (
+                        <div className="h-4" />
+                      )}
+                      {section.items.map((item) => {
+                        const Icon = Icons[item.icon || "arrowRight"];
+                        return (
+                          item.href && (
+                            <Fragment key={`link-fragment-${item.title}`}>
+                              {isSidebarExpanded ? (
+                                <Link
+                                  key={`link-${item.title}`}
+                                  href={item.disabled ? "#" : item.href}
+                                  className={cn(
+                                    "flex items-center gap-3 rounded-md p-2 text-sm font-medium hover:bg-primary hover:text-white",
+                                    path === item.href
+                                      ? "bg-primary text-white"
+                                      : "text-muted-foreground hover:text-white",
+                                    item.disabled &&
+                                      "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
+                                  )}
+                                >
+                                  <Icon className="size-5" />
                                   {item.title}
-                                </TooltipContent>
-                              </Tooltip>
-                            )}
-                          </Fragment>
-                        )
-                      );
-                    })}
-                  </section>
-                ))}
+                                  {item.badge && (
+                                    <Badge className="ml-auto flex size-5 shrink-0 items-center justify-center rounded-full">
+                                      {item.badge}
+                                    </Badge>
+                                  )}
+                                </Link>
+                              ) : (
+                                <Tooltip key={`tooltip-${item.title}`}>
+                                  <TooltipTrigger asChild>
+                                    <Link
+                                      key={`link-tooltip-${item.title}`}
+                                      href={item.disabled ? "#" : item.href}
+                                      className={cn(
+                                        "flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-primary",
+                                        path === item.href
+                                          ? "bg-primary"
+                                          : "text-muted-foreground hover:text-accent-foreground",
+                                        item.disabled &&
+                                          "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
+                                      )}
+                                    >
+                                      <span className="flex size-full items-center justify-center">
+                                        <Icon className="size-5" />
+                                      </span>
+                                    </Link>
+                                  </TooltipTrigger>
+                                  <TooltipContent
+                                    side="right"
+                                    className="bg-gradient"
+                                  >
+                                    {item.title}
+                                  </TooltipContent>
+                                </Tooltip>
+                              )}
+                            </Fragment>
+                          )
+                        );
+                      })}
+                    </section>
+                  );
+                })}
+                <section className="flex flex-col gap-0.5">
+                  <UserAccountNav />
+                </section>
               </nav>
 
               <div className="mt-auto xl:p-4">

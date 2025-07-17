@@ -185,20 +185,6 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
                 maxLength={6}
                 className="border-gray-400 text-center text-2xl tracking-widest focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:border-gray-100"
                 data-form-type="other" // Additional hint for browsers
-                // onPaste={(e) => {
-                //   // Handle paste events for OTP
-                //   const paste = e.clipboardData.getData("text");
-                //   if (paste && /^\d{6}$/.test(paste)) {
-                //     e.preventDefault();
-                //     if (otpInputRef.current) {
-                //       otpInputRef.current.value = paste;
-                //       // Trigger form validation
-                //       otpInputRef.current.dispatchEvent(
-                //         new Event("input", { bubbles: true }),
-                //       );
-                //     }
-                //   }
-                // }}
               />
               {otpErrors?.otp && (
                 <p className="px-1 text-xs text-red-600">
@@ -262,32 +248,6 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
           </button>
         </div>
       </form>
-      {/* <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
-        </div>
-      </div>
-      <button
-        type="button"
-        className={cn(buttonVariants({ variant: "outline" }))}
-        onClick={() => {
-          setIsGoogleLoading(true);
-          signIn("google");
-        }}
-        disabled={isLoading || isGoogleLoading}
-      >
-        {isGoogleLoading ? (
-          <Icons.spinner className="mr-2 size-4 animate-spin" />
-        ) : (
-          <Icons.google className="mr-2 size-4" />
-        )}{" "}
-        Google
-      </button> */}
     </div>
   );
 }

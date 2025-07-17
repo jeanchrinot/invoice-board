@@ -1,9 +1,11 @@
 "use client";
 
 import { useContext } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 
 import { docsConfig } from "@/config/docs";
 import { marketingConfig } from "@/config/marketing";
@@ -17,12 +19,15 @@ import { ModalContext } from "@/components/modals/providers";
 import { Icons } from "@/components/shared/icons";
 import MaxWidthWrapper from "@/components/shared/max-width-wrapper";
 
+import { ModeToggle } from "./mode-toggle";
+
 interface NavBarProps {
   scroll?: boolean;
   large?: boolean;
 }
 
 export function NavBar({ scroll = false }: NavBarProps) {
+  const { theme } = useTheme();
   const scrolled = useScroll(50);
   const { data: session, status } = useSession();
   const { setShowSignInModal } = useContext(ModalContext);
@@ -37,6 +42,8 @@ export function NavBar({ scroll = false }: NavBarProps) {
   const links =
     (selectedLayout && configMap[selectedLayout]) || marketingConfig.mainNav;
 
+  console.log("theme", theme);
+
   return (
     <header
       className={`sticky top-0 z-40 flex w-full justify-center bg-background/60 backdrop-blur-xl transition-all ${
@@ -49,10 +56,20 @@ export function NavBar({ scroll = false }: NavBarProps) {
       >
         <div className="flex gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-1.5">
-            <Icons.logo />
-            <span className="font-urban text-xl font-bold">
-              {siteConfig.name}
-            </span>
+            <Image
+              src="/InvoiceBoard-Logo.png"
+              className="hidden w-[200px] dark:block"
+              width={500}
+              height={94}
+              alt="InvoiceBoard Dark"
+            />
+            <Image
+              src="/InvoiceBoard-Logo-Light.png"
+              className="w-[200px] dark:hidden"
+              width={500}
+              height={94}
+              alt="InvoiceBoard Light"
+            />
           </Link>
 
           {links && links.length > 0 ? (
@@ -128,6 +145,7 @@ export function NavBar({ scroll = false }: NavBarProps) {
           ) : (
             <Skeleton className="hidden h-9 w-28 rounded-full lg:flex" />
           )}
+          <ModeToggle />
         </div>
       </MaxWidthWrapper>
     </header>

@@ -18,13 +18,13 @@ interface ProtectedLayoutProps {
 
 export default async function Dashboard({ children }: ProtectedLayoutProps) {
   const user = await getCurrentUser();
-
-  if (!user) redirect("/login");
+  //   let filteredLinks = sidebarLinks;
 
   const filteredLinks = sidebarLinks.map((section) => ({
     ...section,
     items: section.items.filter(
-      ({ authorizeOnly }) => !authorizeOnly || authorizeOnly === user.role,
+      ({ authorizeOnly }) =>
+        !authorizeOnly || (user && authorizeOnly === user.role),
     ),
   }));
 
@@ -47,12 +47,12 @@ export default async function Dashboard({ children }: ProtectedLayoutProps) {
         </header> */}
 
         <main className="flex-1">
-          <MaxWidthWrapper className="flex h-full max-w-7xl flex-col gap-4 px-0 lg:gap-6">
+          <div className="flex h-full max-w-7xl flex-col gap-4 px-0 lg:gap-6">
             {children}
-          </MaxWidthWrapper>
+          </div>
         </main>
       </div>
-      <ChatWidget />
+      {/* <ChatWidget /> */}
     </div>
   );
 }

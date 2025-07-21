@@ -103,7 +103,7 @@ export function createInvoiceTools() {
           0,
         );
         const taxRate = draft.taxRate || 0;
-        const tax = subtotal * (taxRate / 100);
+        const tax = Math.round(subtotal * (taxRate / 100));
         const total = subtotal + tax;
 
         const finalizedInvoice = invoiceSchema.parse({

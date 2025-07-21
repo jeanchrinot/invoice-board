@@ -1,7 +1,15 @@
 import React, { useRef } from "react";
 import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
-import { Download, Edit3, Receipt, Sparkles, Stars, Wand2 } from "lucide-react";
+import {
+  Download,
+  Edit3,
+  Receipt,
+  Share2,
+  Sparkles,
+  Stars,
+  Wand2,
+} from "lucide-react";
 
 // Define TypeScript interfaces
 interface InvoiceItem {
@@ -126,11 +134,11 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
 
   if (!invoice) {
     return (
-      <div className="flex h-[90%] items-center justify-center rounded-2xl border border-gray-300 bg-gradient-to-br from-gray-100/50 via-slate-100/50 to-gray-200/50 dark:border-gray-700/50 dark:from-gray-900/50 dark:via-slate-900/50 dark:to-gray-800/50">
+      <div className="mx-3 flex h-[90%] items-center justify-center rounded-2xl border border-gray-300 bg-gradient-to-br from-gray-100/50 via-slate-100/50 to-gray-200/50 px-6 dark:border-gray-700/50 dark:from-gray-900/50 dark:via-slate-900/50 dark:to-gray-800/50">
         <div className="max-w-md text-center">
           <div className="relative mb-6">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-gray-400 to-gray-500 dark:from-gray-600 dark:to-gray-700">
-              <Receipt className="h-10 w-10 text-gray-600 dark:text-gray-400" />
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
+              <Receipt className="h-10 w-10 text-white" />
             </div>
             <div className="absolute -right-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
               <Stars className="h-4 w-4 text-white" />
@@ -297,24 +305,24 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
   );
 
   return (
-    <div>
+    <div className="relative">
       {/* Visible Invoice */}
       <div
         ref={invoiceRef}
-        className="mx-auto h-[90vh] max-w-3xl overflow-y-auto bg-white dark:bg-gray-900"
+        className="mx-auto h-[92vh] max-w-7xl overflow-y-auto bg-white pb-4 dark:bg-gray-900"
       >
         {/* Action Buttons */}
-        <div className="flex justify-end space-x-3 bg-gray-50 p-4 dark:bg-gray-800/50">
-          <button className="flex items-center space-x-2 rounded-lg bg-gray-200 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
-            <Edit3 className="h-4 w-4" />
-            <span>Edit</span>
+        <div className="flex justify-end space-x-3 bg-gray-50 p-2 dark:bg-gray-800/50">
+          <button className="flex items-center space-x-2 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+            <Share2 className="h-4 w-4" />
+            <span>Share</span>
           </button>
           <button
             onClick={downloadPDF}
-            className="flex items-center space-x-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+            className="flex items-center space-x-2 rounded-lg bg-blue-600 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-700"
           >
             <Download className="h-4 w-4" />
-            <span>Download PDF</span>
+            <span>Download</span>
           </button>
         </div>
         <InvoiceContent />
@@ -327,6 +335,38 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
       >
         <InvoiceContent />
       </div>
+
+      {/* {isGenerating && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-background/70 dark:bg-black/70 backdrop-blur-sm">
+          <div className="text-center">
+            <div className="relative mb-6">
+              <div className="mx-auto flex h-24 w-24 animate-pulse items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500">
+                <Wand2 className="h-12 w-12 animate-spin text-white" />
+              </div>
+              <div className="absolute -right-2 -top-2 flex h-6 w-6 animate-bounce items-center justify-center rounded-full bg-yellow-400">
+                <Sparkles className="h-4 w-4 text-yellow-900" />
+              </div>
+            </div>
+            <h3 className="mb-2 text-xl font-semibold text-gray-800 dark:text-white">
+              AI Magic in Progress...
+            </h3>
+            <p className="mb-4 text-gray-500 dark:text-gray-400">
+              Crafting your perfect invoice
+            </p>
+            <div className="flex justify-center space-x-1">
+              <div className="h-2 w-2 animate-bounce rounded-full bg-purple-500"></div>
+              <div
+                className="h-2 w-2 animate-bounce rounded-full bg-blue-500"
+                style={{ animationDelay: "0.1s" }}
+              ></div>
+              <div
+                className="h-2 w-2 animate-bounce rounded-full bg-indigo-500"
+                style={{ animationDelay: "0.2s" }}
+              ></div>
+            </div>
+          </div>
+        </div>
+      )} */}
     </div>
   );
 };

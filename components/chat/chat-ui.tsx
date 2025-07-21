@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Bot, Mic, MicOff, Send, User, Zap } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import rehypeHighlight from "rehype-highlight";
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
 
 interface ChatUIProps {
   isAuthenticated: boolean;
@@ -10,6 +14,7 @@ interface ChatUIProps {
   input: string;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isLoading: boolean;
+  status: string;
 }
 
 const ChatUI: React.FC<ChatUIProps> = ({
@@ -21,6 +26,7 @@ const ChatUI: React.FC<ChatUIProps> = ({
   input,
   handleInputChange,
   isLoading = false,
+  status,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -98,41 +104,69 @@ const ChatUI: React.FC<ChatUIProps> = ({
             </div>
           </div>
         ) : (
-          messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-            >
+          messages.map((message, index) => {
+            const isStreaming =
+              status === "streaming" && index === messages.length - 1;
+            const linkClass =
+              message.role === "user"
+                ? "text-yellow-300 hover:text-yellow-500"
+                : "text-blue-600 hover:text-blue-800";
+            return (
               <div
-                className={`flex max-w-sm lg:max-w-md ${message.role === "user" ? "flex-row-reverse" : "flex-row"} items-start space-x-3`}
+                key={message.id}
+                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full ${
-                    message.role === "user"
-                      ? "ml-3 bg-gradient-to-r from-green-500 to-blue-500"
-                      : "bg-gradient-to-r from-blue-500 to-purple-600"
-                  }`}
+                  className={`flex max-w-sm lg:max-w-md ${message.role === "user" ? "flex-row-reverse" : "flex-row"} items-start space-x-3`}
                 >
-                  {message.role === "user" ? (
-                    <User className="h-4 w-4 text-white" />
-                  ) : (
-                    <Bot className="h-4 w-4 text-white" />
-                  )}
-                </div>
-                <div
-                  className={`rounded-2xl px-4 py-3 ${
-                    message.role === "user"
-                      ? "bg-gradient-to-r from-green-600 to-blue-600 text-white"
-                      : "border border-gray-300 bg-white text-gray-900 dark:border-gray-700/50 dark:bg-gray-800/80 dark:text-gray-100"
-                  }`}
-                >
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                    {message.content}
-                  </p>
+                  <div
+                    className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full ${
+                      message.role === "user"
+                        ? "ml-3 bg-gradient-to-r from-green-500 to-blue-500"
+                        : "bg-gradient-to-r from-blue-500 to-purple-600"
+                    }`}
+                  >
+                    {message.role === "user" ? (
+                      <User className="h-4 w-4 text-white" />
+                    ) : (
+                      <Bot className="h-4 w-4 text-white" />
+                    )}
+                  </div>
+                  <div
+                    className={`rounded-2xl px-4 py-3 ${
+                      message.role === "user"
+                        ? "bg-gradient-to-r from-green-600 to-blue-600 text-white"
+                        : "border border-gray-300 bg-white text-gray-900 dark:border-gray-700/50 dark:bg-gray-800/80 dark:text-gray-100"
+                    }`}
+                  >
+                    {isStreaming ? (
+                      <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                        {message.content}
+                      </p>
+                    ) : (
+                      <div className="text-sm leading-relaxed">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            a: ({ node, ...props }) => (
+                              <a
+                                {...props}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`${linkClass} underline`}
+                              />
+                            ),
+                          }}
+                        >
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
 
         {isLoading && (

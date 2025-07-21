@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
 
@@ -5,7 +6,7 @@ import { createInvoiceTools } from "@/lib/invoice/invoice-tools";
 
 export const maxDuration = 30;
 
-export async function POST(req: Request) {
+export const POST = auth(async (req) => {
   const { messages, draft } = await req.json();
 
   const invoiceTools = createInvoiceTools();
@@ -26,4 +27,4 @@ If the user's message contains partial information, use the appropriate tool to 
   });
 
   return result.toDataStreamResponse();
-}
+});

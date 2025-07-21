@@ -47,7 +47,7 @@ export default async function Dashboard({ children }: ProtectedLayoutProps) {
         </header> */}
 
         <main className="flex-1">
-          <div className="flex h-full max-w-7xl flex-col gap-4 px-0 lg:gap-6">
+          <div className="flex h-full flex-col gap-4 px-0 lg:gap-6">
             {children}
           </div>
         </main>

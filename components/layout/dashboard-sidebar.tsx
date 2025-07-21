@@ -11,6 +11,7 @@ import { useTheme } from "next-themes";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useUser } from "@/hooks/use-user";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -27,6 +28,8 @@ import { ModeToggle } from "@/components/layout/mode-toggle";
 import { UserAccountNav } from "@/components/layout/user-account-nav";
 import { Icons } from "@/components/shared/icons";
 
+import { SignUpCard } from "../dashboard/signup-card";
+
 interface DashboardSidebarProps {
   links: SidebarNavItem[];
 }
@@ -34,6 +37,7 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ links }: DashboardSidebarProps) {
   const path = usePathname();
   const { theme } = useTheme();
+  const { user } = useUser();
 
   // NOTE: Use this if you want save in local storage -- Credits: Hosna Qasmei
   //
@@ -178,14 +182,14 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                           "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
                                       )}
                                     >
-                                      <span className="flex size-full items-center justify-center">
+                                      <span className="flex size-full items-center justify-center text-white">
                                         <Icon className="size-5" />
                                       </span>
                                     </Link>
                                   </TooltipTrigger>
                                   <TooltipContent
                                     side="right"
-                                    className="bg-gradient"
+                                    className="bg-gradient text-white dark:text-white"
                                   >
                                     {item.title}
                                   </TooltipContent>
@@ -204,7 +208,8 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
               </nav>
 
               <div className="mt-auto xl:p-4">
-                {isSidebarExpanded ? <UpgradeCard /> : null}
+                {isSidebarExpanded && user ? <UpgradeCard /> : null}
+                {isSidebarExpanded && !user ? <SignUpCard /> : null}
               </div>
             </div>
           </aside>

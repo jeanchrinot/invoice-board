@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { useAssistantStore } from "@/stores/assistantStore";
 import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
 import {
@@ -11,56 +12,16 @@ import {
   Wand2,
 } from "lucide-react";
 
-// Define TypeScript interfaces
-interface InvoiceItem {
-  description: string;
-  quantity: number;
-  rate: number;
-  amount: number;
-}
+// import { Invoice } from "@/types/invoice";
 
-interface Invoice {
-  number: string;
-  date: string;
-  dueDate: string;
-  currency: string;
-  paymentDetails: string;
-  customNotes: string;
-  billTo: {
-    name: string;
-    address: string;
-    city: string;
-    state: string;
-    zip: string;
-    email: string;
-    phone: string;
-  };
-  from: {
-    name: string;
-    address: string;
-    city: string;
-    state: string;
-    zip: string;
-    email: string;
-    phone: string;
-  };
-  items: InvoiceItem[];
-  subtotal: number;
-  taxRate: number;
-  tax: number;
-  total: number;
-}
+// interface InvoicePreviewProps {
+//   invoice?: Invoice;
+//   isGenerating?: boolean;
+// }
 
-interface InvoicePreviewProps {
-  invoice?: Invoice;
-  isGenerating?: boolean;
-}
-
-const InvoicePreview: React.FC<InvoicePreviewProps> = ({
-  invoice,
-  isGenerating,
-}) => {
+const InvoicePreview: React.FC = () => {
   const invoiceRef = useRef<HTMLDivElement>(null);
+  const { currentInvoice, isGenerating } = useAssistantStore();
 
   const downloadPDF = async () => {
     const element = document.getElementById("invoice-export");
@@ -94,67 +55,71 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
     const imgHeight = pageHeight;
 
     pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-    pdf.save(`Invoice-${invoice?.number}.pdf`);
+    pdf.save(`Invoice-${currentInvoice?.number}.pdf`);
     element.style.display = "none";
   };
 
   if (isGenerating) {
     return (
-      <div className="flex h-full items-center justify-center rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-100/20 via-blue-100/20 to-indigo-100/20 dark:from-purple-900/20 dark:via-blue-900/20 dark:to-indigo-900/20">
-        <div className="text-center">
-          <div className="relative mb-6">
-            <div className="mx-auto flex h-24 w-24 animate-pulse items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500">
-              <Wand2 className="h-12 w-12 animate-spin text-white" />
+      <div className="h-full w-full px-4 py-6">
+        <div className="flex h-full items-center justify-center rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-100/20 via-blue-100/20 to-indigo-100/20 dark:from-purple-900/20 dark:via-blue-900/20 dark:to-indigo-900/20">
+          <div className="text-center">
+            <div className="relative mb-6">
+              <div className="mx-auto flex h-24 w-24 animate-pulse items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500">
+                <Wand2 className="h-12 w-12 animate-spin text-white" />
+              </div>
+              <div className="absolute -right-2 -top-2 flex h-6 w-6 animate-bounce items-center justify-center rounded-full bg-yellow-400">
+                <Sparkles className="h-4 w-4 text-yellow-900" />
+              </div>
             </div>
-            <div className="absolute -right-2 -top-2 flex h-6 w-6 animate-bounce items-center justify-center rounded-full bg-yellow-400">
-              <Sparkles className="h-4 w-4 text-yellow-900" />
+            <h3 className="mb-2 text-xl font-semibold text-gray-800 dark:text-white">
+              AI Magic in Progress...
+            </h3>
+            <p className="mb-4 text-gray-500 dark:text-gray-400">
+              Crafting your perfect invoice
+            </p>
+            <div className="flex justify-center space-x-1">
+              <div className="h-2 w-2 animate-bounce rounded-full bg-purple-500"></div>
+              <div
+                className="h-2 w-2 animate-bounce rounded-full bg-blue-500"
+                style={{ animationDelay: "0.1s" }}
+              ></div>
+              <div
+                className="h-2 w-2 animate-bounce rounded-full bg-indigo-500"
+                style={{ animationDelay: "0.2s" }}
+              ></div>
             </div>
-          </div>
-          <h3 className="mb-2 text-xl font-semibold text-gray-800 dark:text-white">
-            AI Magic in Progress...
-          </h3>
-          <p className="mb-4 text-gray-500 dark:text-gray-400">
-            Crafting your perfect invoice
-          </p>
-          <div className="flex justify-center space-x-1">
-            <div className="h-2 w-2 animate-bounce rounded-full bg-purple-500"></div>
-            <div
-              className="h-2 w-2 animate-bounce rounded-full bg-blue-500"
-              style={{ animationDelay: "0.1s" }}
-            ></div>
-            <div
-              className="h-2 w-2 animate-bounce rounded-full bg-indigo-500"
-              style={{ animationDelay: "0.2s" }}
-            ></div>
           </div>
         </div>
       </div>
     );
   }
 
-  if (!invoice) {
+  if (!currentInvoice) {
     return (
-      <div className="mx-3 flex h-[90%] items-center justify-center rounded-2xl border border-gray-300 bg-gradient-to-br from-gray-100/50 via-slate-100/50 to-gray-200/50 px-6 dark:border-gray-700/50 dark:from-gray-900/50 dark:via-slate-900/50 dark:to-gray-800/50">
-        <div className="max-w-md text-center">
-          <div className="relative mb-6">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
-              <Receipt className="h-10 w-10 text-white" />
+      <div className="h-full w-full px-4 py-6">
+        <div className="flex h-full items-center justify-center rounded-2xl border border-gray-300 bg-gradient-to-br from-gray-100/50 via-slate-100/50 to-gray-200/50 px-6 dark:border-gray-700/50 dark:from-gray-900/50 dark:via-slate-900/50 dark:to-gray-800/50">
+          <div className="max-w-md text-center">
+            <div className="relative mb-6">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
+                <Receipt className="h-10 w-10 text-white" />
+              </div>
+              <div className="absolute -right-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
+                <Stars className="h-4 w-4 text-white" />
+              </div>
             </div>
-            <div className="absolute -right-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
-              <Stars className="h-4 w-4 text-white" />
-            </div>
-          </div>
-          <h3 className="mb-2 text-xl font-semibold text-gray-700 dark:text-gray-300">
-            Invoice Preview
-          </h3>
-          <p className="mb-6 text-gray-500 dark:text-gray-400">
-            Your AI-generated invoices will appear here like magic. Start by
-            asking me to create an invoice!
-          </p>
-          <div className="rounded-lg border border-gray-300 bg-white p-4 dark:border-gray-700/50 dark:bg-gray-800/50">
-            <p className="text-sm italic text-gray-500 dark:text-gray-400">
-              "Create an invoice for John Doe for web development services"
+            <h3 className="mb-2 text-xl font-semibold text-gray-700 dark:text-gray-300">
+              Invoice Preview
+            </h3>
+            <p className="mb-6 text-gray-500 dark:text-gray-400">
+              Your AI-generated invoices will appear here like magic. Start by
+              asking me to create an invoice!
             </p>
+            <div className="rounded-lg border border-gray-300 bg-white p-4 dark:border-gray-700/50 dark:bg-gray-800/50">
+              <p className="text-sm italic text-gray-500 dark:text-gray-400">
+                "Create an invoice for John Doe for web development services"
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -168,11 +133,11 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-2xl font-bold">INVOICE</h2>
-            <p className="text-blue-100">#{invoice.number}</p>
+            <p className="text-blue-100">#{currentInvoice.number}</p>
           </div>
           <div className="text-right">
-            <p className="text-blue-100">Date: {invoice.date}</p>
-            <p className="text-blue-100">Due: {invoice.dueDate}</p>
+            <p className="text-blue-100">Date: {currentInvoice.date}</p>
+            <p className="text-blue-100">Due: {currentInvoice.dueDate}</p>
           </div>
         </div>
       </div>
@@ -186,14 +151,14 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
               Bill To:
             </h3>
             <div className="text-gray-600 dark:text-gray-400">
-              <p className="font-medium">{invoice.billTo.name}</p>
-              <p>{invoice.billTo.address}</p>
+              <p className="font-medium">{currentInvoice.billTo.name}</p>
+              <p>{currentInvoice.billTo.address}</p>
               <p>
-                {invoice.billTo.city}, {invoice.billTo.state}{" "}
-                {invoice.billTo.zip}
+                {currentInvoice.billTo.city}, {currentInvoice.billTo.state}{" "}
+                {currentInvoice.billTo.zip}
               </p>
-              <p>Email: {invoice.billTo.email}</p>
-              <p>Phone: {invoice.billTo.phone}</p>
+              <p>{currentInvoice.billTo.email}</p>
+              <p>{currentInvoice.billTo.phone}</p>
             </div>
           </div>
           <div>
@@ -201,13 +166,14 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
               From:
             </h3>
             <div className="text-gray-600 dark:text-gray-400">
-              <p className="font-medium">{invoice.from.name}</p>
-              <p>{invoice.from.address}</p>
+              <p className="font-medium">{currentInvoice.from.name}</p>
+              <p>{currentInvoice.from.address}</p>
               <p>
-                {invoice.from.city}, {invoice.from.state} {invoice.from.zip}
+                {currentInvoice.from.city}, {currentInvoice.from.state}{" "}
+                {currentInvoice.from.zip}
               </p>
-              <p>Email: {invoice.from.email}</p>
-              <p>Phone: {invoice.from.phone}</p>
+              <p>{currentInvoice.from.email}</p>
+              <p>{currentInvoice.from.phone}</p>
             </div>
           </div>
         </div>
@@ -236,7 +202,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
                 </tr>
               </thead>
               <tbody>
-                {invoice.items.map((item, index) => (
+                {currentInvoice.items.map((item, index) => (
                   <tr
                     key={index}
                     className="border-b border-gray-200 dark:border-gray-700"
@@ -248,10 +214,10 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
                       {item.quantity}
                     </td>
                     <td className="p-3 text-right text-gray-800 dark:text-gray-200">
-                      {invoice.currency} {item.rate}
+                      {currentInvoice.currency} {item.rate}
                     </td>
                     <td className="p-3 text-right text-gray-800 dark:text-gray-200">
-                      {invoice.currency} {item.amount}
+                      {currentInvoice.currency} {item.amount}
                     </td>
                   </tr>
                 ))}
@@ -268,38 +234,50 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
                 Subtotal:
               </span>
               <span className="text-gray-800 dark:text-gray-200">
-                {invoice.currency} {invoice.subtotal}
+                {currentInvoice.currency} {currentInvoice.subtotal}
               </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600 dark:text-gray-400">
-                Tax ({invoice.taxRate}%):
-              </span>
-              <span className="text-gray-800 dark:text-gray-200">
-                {invoice.currency} {invoice.tax}
-              </span>
-            </div>
+            {currentInvoice.taxRate && currentInvoice.taxRate > 0 && (
+              <div className="flex justify-between">
+                <span className="text-gray-600 dark:text-gray-400">
+                  Tax ({currentInvoice.taxRate}%):
+                </span>
+                <span className="text-gray-800 dark:text-gray-200">
+                  {currentInvoice.currency} {currentInvoice.tax}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between border-t border-gray-200 pt-2 text-lg font-semibold dark:border-gray-700">
               <span className="text-gray-800 dark:text-gray-200">Total:</span>
               <span className="text-gray-800 dark:text-gray-200">
-                {invoice.currency} {invoice.total}
+                {currentInvoice.currency} {currentInvoice.total}
               </span>
             </div>
           </div>
         </div>
 
         {/* Payment Information */}
-        <div>
-          <h3 className="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
-            Payment Information:
-          </h3>
-          <div className="text-gray-600 dark:text-gray-400">
-            <p className="whitespace-pre-wrap">{invoice.paymentDetails}</p>
-            {invoice.customNotes && (
-              <p className="mt-2 italic">{invoice.customNotes}</p>
-            )}
+        {currentInvoice.paymentDetails && (
+          <div>
+            <h3 className="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
+              Payment Information:
+            </h3>
+            <div className="text-gray-600 dark:text-gray-400">
+              <p className="whitespace-pre-wrap">
+                {currentInvoice.paymentDetails}
+              </p>
+            </div>
           </div>
-        </div>
+        )}
+        {currentInvoice.customNotes && (
+          <div>
+            <div className="text-gray-600 dark:text-gray-400">
+              {currentInvoice.customNotes && (
+                <p className="mt-2 italic">{currentInvoice.customNotes}</p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -309,7 +287,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
       {/* Visible Invoice */}
       <div
         ref={invoiceRef}
-        className="mx-auto h-[92vh] max-w-7xl overflow-y-auto bg-white pb-4 dark:bg-gray-900"
+        className="mx-auto h-[100vh] max-w-7xl overflow-y-auto bg-white pb-4 dark:bg-gray-900"
       >
         {/* Action Buttons */}
         <div className="flex justify-end space-x-3 bg-gray-50 p-2 dark:bg-gray-800/50">

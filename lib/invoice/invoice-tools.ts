@@ -12,7 +12,7 @@ export function createInvoiceTools() {
       },
     },
     setFreelancerInfo: {
-      description: "Set freelancer (from) information for the invoice",
+      description: "Set service provider information for the invoice",
       parameters: z.object({
         name: z.string(),
         address: z.string().optional(),
@@ -31,7 +31,7 @@ export function createInvoiceTools() {
       },
     },
     setClientInfo: {
-      description: "Set client (billTo) information for the invoice",
+      description: "Set client information for the invoice",
       parameters: z.object({
         name: z.string(),
         address: z.string().optional(),

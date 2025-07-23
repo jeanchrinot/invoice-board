@@ -11,8 +11,8 @@ const AuthPromoContent = () => {
             Professional Invoicing Made Simple
           </h1>
           <p className="text-xl leading-relaxed text-blue-100">
-            Join thousands of professionals who've streamlined their invoicing
-            process with our AI-powered platform.
+            {`Join thousands of professionals who've streamlined their invoicing
+            process with our AI-powered platform.`}
           </p>
         </div>
 
@@ -99,8 +99,8 @@ const AuthPromoContent = () => {
                 New: Enhanced AI Templates
               </p>
               <p className="text-sm leading-relaxed text-blue-100">
-                We've upgraded our AI engine with industry-specific templates
-                for faster, more accurate invoice generation.
+                {`We've upgraded our AI engine with industry-specific templates
+                for faster, more accurate invoice generation.`}
               </p>
               <p className="mt-2 text-xs text-blue-200">Released this week</p>
             </div>

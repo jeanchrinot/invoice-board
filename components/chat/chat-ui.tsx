@@ -131,7 +131,7 @@ const ChatUI: React.FC<ChatUIProps> = ({
       {/* Messages Container */}
       <div className="flex-1 space-y-4 overflow-y-auto bg-gray-100 p-4 dark:bg-gray-900">
         {messages.length === 0 ? (
-          <div className="flex min-h-[100%] flex-col items-center justify-center text-center">
+          <div className="flex min-h-full flex-col items-center justify-center text-center">
             <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
               <Bot className="h-8 w-8 text-white" />
             </div>
@@ -139,8 +139,8 @@ const ChatUI: React.FC<ChatUIProps> = ({
               Ready to Create Magic?
             </h2>
             <p className="mb-6 max-w-md text-gray-500 dark:text-gray-400">
-              I'm your AI invoice wizard! Tell me what you need and watch as I
-              conjure up the perfect invoice.
+              {`I'm your AI invoice wizard! Tell me what you need and watch as I
+              conjure up the perfect invoice.`}
             </p>
             <div className="grid max-w-md grid-cols-1 gap-3 text-sm">
               {quickReplies.map((reply, index) => {
@@ -177,7 +177,7 @@ const ChatUI: React.FC<ChatUIProps> = ({
                   className={`flex max-w-sm lg:max-w-md ${message.role === "user" ? "flex-row-reverse" : "flex-row"} items-start space-x-3`}
                 >
                   <div
-                    className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full ${
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
                       message.role === "user"
                         ? "ml-3 bg-gradient-to-r from-green-500 to-blue-500"
                         : "bg-gradient-to-r from-blue-500 to-purple-600"
@@ -257,7 +257,7 @@ const ChatUI: React.FC<ChatUIProps> = ({
                 onKeyDown={handleKeyDown}
                 onChange={handleInputChange}
                 placeholder={`${isTokenLimitReached() ? "You have reached your token limit. Sign up now to unlock full power." : "Ask AI assistant anything..."}`}
-                className="min-h-[48px] w-full resize-none bg-transparent p-3 text-gray-900 placeholder-gray-400 focus:outline-none dark:text-gray-100"
+                className="min-h-[48px] w-full resize-none bg-transparent p-3 text-gray-900 placeholder:text-gray-400 focus:outline-none dark:text-gray-100"
                 disabled={isLoading || isTokenLimitReached()}
                 rows={3}
               ></textarea>

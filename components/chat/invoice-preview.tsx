@@ -115,11 +115,6 @@ const InvoicePreview: React.FC = () => {
               Your AI-generated invoices will appear here like magic. Start by
               asking me to create an invoice!
             </p>
-            <div className="rounded-lg border border-gray-300 bg-white p-4 dark:border-gray-700/50 dark:bg-gray-800/50">
-              <p className="text-sm italic text-gray-500 dark:text-gray-400">
-                "Create an invoice for John Doe for web development services"
-              </p>
-            </div>
           </div>
         </div>
       </div>

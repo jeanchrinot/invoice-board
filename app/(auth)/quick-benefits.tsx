@@ -2,7 +2,7 @@ const AuthQuickBenefits = () => {
   return (
     <div className="mt-8 border-t border-gray-200 pt-6 dark:border-gray-700">
       <p className="mb-3 text-center text-sm font-medium text-gray-900 dark:text-white">
-        What you'll get:
+        {`What you'll get:`}
       </p>
       <div className="grid grid-cols-2 gap-3 text-xs text-gray-600 dark:text-gray-300">
         <div className="flex items-center">

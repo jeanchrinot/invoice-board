@@ -95,7 +95,7 @@ export function SignUpCard() {
         {/* Limit Alert */}
         {isTokenLimitReached() && (
           <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-800/50 dark:bg-red-950/30">
-            <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-red-600" />
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
             <div className="text-xs leading-relaxed text-red-700 dark:text-red-300">
               <span className="font-semibold">Token limit reached.</span> Sign
               up for unlimited invoices and 500K monthly tokens.

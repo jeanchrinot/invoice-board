@@ -3,13 +3,18 @@ import { openai } from "@ai-sdk/openai";
 import { streamText } from "ai";
 
 import { createInvoiceTools } from "@/lib/invoice/invoice-tools";
+import { getCurrentUser } from "@/lib/session";
 
 export const maxDuration = 30;
 
 export const POST = auth(async (req) => {
   const { messages, draft } = await req.json();
+  const user = await getCurrentUser();
 
-  const invoiceTools = createInvoiceTools();
+  const invoiceTools = createInvoiceTools(user?.id);
+
+  console.log("messages", messages);
+  console.log("draft", draft);
 
   const result = await streamText({
     model: openai("gpt-4o"),

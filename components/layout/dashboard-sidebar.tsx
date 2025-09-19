@@ -36,7 +36,6 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ links }: DashboardSidebarProps) {
   const path = usePathname();
-  const { theme } = useTheme();
   const { user } = useUser();
 
   // NOTE: Use this if you want save in local storage -- Credits: Hosna Qasmei

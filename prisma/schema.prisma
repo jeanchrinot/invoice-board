@@ -62,6 +62,7 @@ model User {
   accounts Account[]
   sessions Session[]
   invoiceDrafts InvoiceDraft[]
+  invoices Invoice[]
 
   stripeCustomerId       String?   @unique @map(name: "stripe_customer_id")
   stripeSubscriptionId   String?   @unique @map(name: "stripe_subscription_id")
@@ -103,6 +104,34 @@ model InvoiceDraft {
 
   @@index([userId])
   @@map(name: "invoice_drafts")
+}
+
+model Invoice {
+  id            String    @id @default(cuid())
+  userId        String
+  type          InvoiceType @default(INVOICE)
+  status        DraftStatus @default(IN_PROGRESS)
+  number   String?
+  date DateTime?
+  dueDate DateTime?
+  currency String?
+  paymentDetails String?
+  customNotes String?
+  billTo Json?
+  from Json?
+  items Json?
+  subtotal Float?
+  taxRate Float?
+  tax Float?
+  total Float?
+
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map(name: "invoices")
 }
 
 enum DraftStatus {

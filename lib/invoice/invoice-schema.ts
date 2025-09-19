@@ -1,3 +1,4 @@
+import { DraftStatus } from "@prisma/client";
 import { z } from "zod";
 
 export const invoiceSchema = z.object({
@@ -6,6 +7,7 @@ export const invoiceSchema = z.object({
       .toString()
       .padStart(3, "0")}`,
   ),
+  status: z.nativeEnum(DraftStatus).default(DraftStatus.IN_PROGRESS),
   date: z.string().default(new Date().toISOString().split("T")[0]),
   dueDate: z
     .string()
@@ -59,6 +61,7 @@ export const invoiceSchema = z.object({
 
 export interface Invoice {
   number: string;
+  status: string;
   date: string;
   dueDate: string;
   currency: string;

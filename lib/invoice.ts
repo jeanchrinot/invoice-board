@@ -4,6 +4,22 @@ import { getSelectedDraft } from "@/lib/ai-memory";
 
 const prisma = new PrismaClient();
 
+export async function findInvoice(
+  userId: string | undefined,
+  //   clientName: string | undefined,
+  number: string | undefined,
+) {
+  const draft = await prisma.invoice.findFirst({
+    where: {
+      userId,
+      number,
+    },
+    orderBy: { updatedAt: "desc" },
+  });
+
+  return draft;
+}
+
 export async function findInvoiceDraft(
   userId: string | undefined,
   //   clientName: string | undefined,
@@ -262,6 +278,111 @@ export async function finalizeInvoiceDraft(draftId: string) {
   });
 }
 
+// export async function updateInvoice(
+//   invoiceId: string,
+//   invoiceDraft: Prisma.InvoiceUpdateInput,
+// ) {
+//   const invoice = await prisma.invoice.findUnique({
+//     where: { id: invoiceId },
+//   });
+
+//   if (!invoice) {
+//     throw new Error("Invoice not found");
+//   }
+
+//   // fields you want to allow updating
+//   const updatableFields: (keyof typeof invoice)[] = [
+//     "number",
+//     "status",
+//     "date",
+//     "dueDate",
+//     "currency",
+//     "paymentDetails",
+//     "customNotes",
+//     "billTo",
+//     "from",
+//     "items",
+//     "subtotal",
+//     "taxRate",
+//     "tax",
+//     "total",
+//   ];
+
+//   // Build update data: prefer invoiceDraft value if defined, else keep old value
+//   const data: Partial<typeof invoice> = {};
+//   for (const field of updatableFields) {
+//     const draftValue = invoiceDraft[field as keyof typeof invoiceDraft];
+//     if (draftValue !== undefined) {
+//       // @ts-ignore (because json types cause mismatch)
+//       data[field] = draftValue;
+//     } else {
+//       // @ts-ignore
+//       data[field] = invoice[field];
+//     }
+//   }
+
+//   return prisma.invoice.update({
+//     where: { id: invoiceId },
+//     data,
+//   });
+// }
+
+// import { Prisma } from "@prisma/client";
+// import { prisma } from "@/lib/prisma"; // adjust path
+
+export async function updateInvoice(
+  invoiceId: string,
+  invoiceDraft: Partial<Prisma.InvoiceUpdateInput>,
+) {
+  return prisma.invoice.update({
+    where: { id: invoiceId },
+    data: invoiceDraft,
+  });
+}
+
+export async function createOrUpdateInvoice(
+  invoiceId: string | null,
+  userId: string,
+  data: Omit<
+    Prisma.InvoiceUncheckedCreateInput,
+    "id" | "userId" | "type" | "createdAt" | "updatedAt"
+  > & {
+    status?: string;
+    date?: string;
+    dueDate?: string;
+  },
+) {
+  // Normalize date fields
+  const normalizedData = {
+    ...data,
+    ...(data.date ? { date: new Date(data.date) } : {}),
+    ...(data.dueDate ? { dueDate: new Date(data.dueDate) } : {}),
+  };
+
+  if (invoiceId) {
+    // check if invoice exists
+    const existing = await prisma.invoice.findUnique({
+      where: { id: invoiceId },
+    });
+
+    if (existing) {
+      // update only the allowed fields
+      return prisma.invoice.update({
+        where: { id: invoiceId },
+        data: normalizedData,
+      });
+    }
+  }
+
+  // create new invoice
+  return prisma.invoice.create({
+    data: {
+      ...normalizedData,
+      userId, // always required
+    },
+  });
+}
+
 export async function cancelInvoiceDraft(draftId: string) {
   return prisma.invoiceDraft.update({
     where: { id: draftId },
@@ -342,6 +463,23 @@ export function calculateAmount(draft: any) {
   const total = subtotal + taxAmount;
 
   return total;
+}
+
+export async function createInvoiceNumber(userId: string) {
+  const invoiceCount = await prisma.invoice.count({
+    where: { userId },
+  });
+
+  // increment count so new invoice starts at 1 not 0
+  const nextCount = invoiceCount + 1;
+  const paddedCount = String(nextCount).padStart(3, "0"); // 001, 002, 003...
+
+  const now = new Date();
+  const day = String(now.getDate()).padStart(2, "0");
+  const month = String(now.getMonth() + 1).padStart(2, "0"); // 0-based
+  const year = now.getFullYear();
+
+  return `INV-${day}-${month}-${year}-${paddedCount}`;
 }
 
 export function getStatusClass(status: string) {

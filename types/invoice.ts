@@ -7,6 +7,8 @@ export interface InvoiceItem {
 }
 
 export interface Invoice {
+  id?: string;
+  status?: string;
   number: string;
   date: string;
   dueDate: string;

@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import { Invoice } from "@/types/invoice";
-import { guestUserLimit } from "@/config/user";
+import { UsageLimit } from "@/hooks/use-user";
 
 export interface ChatMessage {
   id: string;
@@ -23,14 +23,14 @@ interface AssistantStore {
   setMobileTab: (tab: "chat" | "preview") => void;
 
   // Invoice generation state
-  invoices: Invoice[];
-  currentInvoice: Invoice | null;
-  setCurrentInvoice: (invoice: Invoice | null) => void;
-  addInvoice: (invoice: Invoice) => void;
+  invoices: Partial<Invoice>[] | Invoice[];
+  currentInvoice: Partial<Invoice> | Invoice | null;
+  setCurrentInvoice: (invoice: Partial<Invoice> | Invoice | null) => void;
+  addInvoice: (invoice: Partial<Invoice> | Invoice) => void;
 
-  invoiceDraft: Partial<Invoice> | null;
-  setInvoiceDraft: (draft: Partial<Invoice> | null) => void;
-  mergeInvoiceDraft: (partial: Partial<Invoice>) => void;
+  // invoiceDraft: Partial<Invoice> | null;
+  // setInvoiceDraft: (draft: Partial<Invoice> | null) => void;
+  mergeInvoice: (partial: Partial<Invoice> | Invoice) => void;
 
   isGenerating: boolean;
   setIsGenerating: (val: boolean) => void;
@@ -51,8 +51,8 @@ interface AssistantStore {
   setConversationId: (id: string) => void;
   newConversation: () => void;
   //Limit
-  isInvoiceLimitReached: () => boolean;
-  isTokenLimitReached: () => boolean;
+  isInvoiceLimitReached: (usageLimit: UsageLimit) => boolean;
+  isTokenLimitReached: (usageLimit: UsageLimit) => boolean;
   // Reset everything
   resetIfExpired: () => void;
 }
@@ -72,45 +72,30 @@ export const useAssistantStore = create<AssistantStore>()(
         set((state) => ({
           invoices: [...state.invoices, invoice],
         })),
-      invoiceDraft: null,
-      setInvoiceDraft: (draft) => set({ invoiceDraft: draft }),
 
-      mergeInvoiceDraft: (partial) =>
+      mergeInvoice: (partial) =>
         set((state) => {
-          const prevDraft = state.invoiceDraft || {};
+          const prevInvoice = state.currentInvoice || {};
 
           return {
-            invoiceDraft: {
-              ...prevDraft,
+            currentInvoice: {
+              ...prevInvoice,
               ...partial,
 
               billTo: {
-                ...(prevDraft.billTo || {}),
+                ...(prevInvoice.billTo || {}),
                 ...(partial.billTo || {}),
               },
 
               from: {
-                ...(prevDraft.from || {}),
+                ...(prevInvoice.from || {}),
                 ...(partial.from || {}),
               },
 
-              items: partial.items
-                ? [...(prevDraft.items || []), ...partial.items]
-                : (prevDraft.items ?? []),
+              items: partial.items ?? prevInvoice.items ?? [],
             },
           };
         }),
-
-      //   mergeInvoiceDraft: (partial) =>
-      //     set((state) => ({
-      //       invoiceDraft: {
-      //         ...state.invoiceDraft,
-      //         ...partial,
-      //         items: partial.items
-      //           ? [...(state.invoiceDraft?.items || []), ...partial.items]
-      //           : state.invoiceDraft?.items,
-      //       },
-      //     })),
 
       isGenerating: false,
       setIsGenerating: (val) => set({ isGenerating: val }),
@@ -164,7 +149,7 @@ export const useAssistantStore = create<AssistantStore>()(
           conversationId: nanoid(),
           messages: [],
           currentInvoice: null,
-          invoiceDraft: null,
+          // invoiceDraft: null,
           isGenerating: false,
         });
       },
@@ -185,14 +170,13 @@ export const useAssistantStore = create<AssistantStore>()(
         if (now - usage.lastReset > ONE_DAY_MS) {
           set({
             currentInvoice: null,
-            invoiceDraft: null,
+            // invoiceDraft: null,
             isGenerating: false,
             messages: [],
             invoices: [],
             conversationId: nanoid(),
             usage: {
               invoicesCreated: 0,
-              //   tokensUsed: usage.tokensUsed,
               tokensUsed: 0,
               lastReset: now,
             },
@@ -200,27 +184,17 @@ export const useAssistantStore = create<AssistantStore>()(
         }
       },
 
-      isInvoiceLimitReached: () => {
+      isInvoiceLimitReached: (usageLimit: UsageLimit) => {
         get().resetIfExpired();
         const { invoicesCreated } = get().usage;
-        return invoicesCreated >= guestUserLimit.invoices;
+        return invoicesCreated >= usageLimit.invoices;
       },
 
-      isTokenLimitReached: () => {
+      isTokenLimitReached: (usageLimit: UsageLimit) => {
         get().resetIfExpired();
         const { tokensUsed } = get().usage;
-        return tokensUsed >= guestUserLimit.tokens;
+        return tokensUsed >= usageLimit.tokens;
       },
-
-      //   reset: () =>
-      //     set({
-      //       currentInvoice: null,
-      //       invoiceDraft: null,
-      //       isGenerating: false,
-      //       usage: { tokensUsed: 0, invoicesCreated: 0, lastReset:Date.now() },
-      //       messages: [],
-      //       conversationId: nanoid(),
-      //     }),
     }),
     {
       name: "assistant-store", // localStorage key

@@ -12,13 +12,6 @@ import {
   Wand2,
 } from "lucide-react";
 
-// import { Invoice } from "@/types/invoice";
-
-// interface InvoicePreviewProps {
-//   invoice?: Invoice;
-//   isGenerating?: boolean;
-// }
-
 const InvoicePreview: React.FC = () => {
   const invoiceRef = useRef<HTMLDivElement>(null);
   const { currentInvoice, isGenerating } = useAssistantStore();
@@ -59,6 +52,18 @@ const InvoicePreview: React.FC = () => {
     element.style.display = "none";
   };
 
+  const formatDate = (dateString: string | undefined) => {
+    const date = dateString ? new Date(dateString) : null;
+    const formattedDate = date
+      ? date.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long", // "short" for abbreviated month
+          day: "numeric",
+        })
+      : "";
+    return formattedDate;
+  };
+
   if (isGenerating) {
     return (
       <div className="h-full w-full px-4 py-6">
@@ -95,7 +100,7 @@ const InvoicePreview: React.FC = () => {
     );
   }
 
-  if (!currentInvoice) {
+  if (!currentInvoice || currentInvoice?.status === "IN_PROGRESS") {
     return (
       <div className="h-full w-full px-4 py-6">
         <div className="flex h-full items-center justify-center rounded-2xl border border-gray-300 bg-gradient-to-br from-gray-100/50 via-slate-100/50 to-gray-200/50 px-6 dark:border-gray-700/50 dark:from-gray-900/50 dark:via-slate-900/50 dark:to-gray-800/50">
@@ -131,8 +136,12 @@ const InvoicePreview: React.FC = () => {
             <p className="text-blue-100">#{currentInvoice.number}</p>
           </div>
           <div className="text-right">
-            <p className="text-blue-100">Date: {currentInvoice.date}</p>
-            <p className="text-blue-100">Due: {currentInvoice.dueDate}</p>
+            <p className="text-blue-100">
+              Date: {formatDate(currentInvoice.date)}
+            </p>
+            <p className="text-blue-100">
+              Due: {formatDate(currentInvoice.dueDate)}
+            </p>
           </div>
         </div>
       </div>
@@ -146,14 +155,14 @@ const InvoicePreview: React.FC = () => {
               Bill To:
             </h3>
             <div className="text-gray-600 dark:text-gray-400">
-              <p className="font-medium">{currentInvoice.billTo.name}</p>
-              <p>{currentInvoice.billTo.address}</p>
+              <p className="font-medium">{currentInvoice.billTo?.name}</p>
+              <p>{currentInvoice.billTo?.address}</p>
               <p>
-                {currentInvoice.billTo.city}, {currentInvoice.billTo.state}{" "}
-                {currentInvoice.billTo.zip}
+                {currentInvoice.billTo?.city}, {currentInvoice.billTo?.state}{" "}
+                {currentInvoice.billTo?.zip}
               </p>
-              <p>{currentInvoice.billTo.email}</p>
-              <p>{currentInvoice.billTo.phone}</p>
+              <p>{currentInvoice.billTo?.email}</p>
+              <p>{currentInvoice.billTo?.phone}</p>
             </div>
           </div>
           <div>
@@ -161,14 +170,14 @@ const InvoicePreview: React.FC = () => {
               From:
             </h3>
             <div className="text-gray-600 dark:text-gray-400">
-              <p className="font-medium">{currentInvoice.from.name}</p>
-              <p>{currentInvoice.from.address}</p>
+              <p className="font-medium">{currentInvoice.from?.name}</p>
+              <p>{currentInvoice.from?.address}</p>
               <p>
-                {currentInvoice.from.city}, {currentInvoice.from.state}{" "}
-                {currentInvoice.from.zip}
+                {currentInvoice.from?.city}, {currentInvoice.from?.state}{" "}
+                {currentInvoice.from?.zip}
               </p>
-              <p>{currentInvoice.from.email}</p>
-              <p>{currentInvoice.from.phone}</p>
+              <p>{currentInvoice.from?.email}</p>
+              <p>{currentInvoice.from?.phone}</p>
             </div>
           </div>
         </div>
@@ -197,7 +206,7 @@ const InvoicePreview: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentInvoice.items.map((item, index) => (
+                {currentInvoice.items?.map((item, index) => (
                   <tr
                     key={index}
                     className="border-b border-gray-200 dark:border-gray-700"
@@ -308,38 +317,6 @@ const InvoicePreview: React.FC = () => {
       >
         <InvoiceContent />
       </div>
-
-      {/* {isGenerating && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-background/70 dark:bg-black/70 backdrop-blur-sm">
-          <div className="text-center">
-            <div className="relative mb-6">
-              <div className="mx-auto flex h-24 w-24 animate-pulse items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-blue-500">
-                <Wand2 className="h-12 w-12 animate-spin text-white" />
-              </div>
-              <div className="absolute -right-2 -top-2 flex h-6 w-6 animate-bounce items-center justify-center rounded-full bg-yellow-400">
-                <Sparkles className="h-4 w-4 text-yellow-900" />
-              </div>
-            </div>
-            <h3 className="mb-2 text-xl font-semibold text-gray-800 dark:text-white">
-              AI Magic in Progress...
-            </h3>
-            <p className="mb-4 text-gray-500 dark:text-gray-400">
-              Crafting your perfect invoice
-            </p>
-            <div className="flex justify-center space-x-1">
-              <div className="h-2 w-2 animate-bounce rounded-full bg-purple-500"></div>
-              <div
-                className="h-2 w-2 animate-bounce rounded-full bg-blue-500"
-                style={{ animationDelay: "0.1s" }}
-              ></div>
-              <div
-                className="h-2 w-2 animate-bounce rounded-full bg-indigo-500"
-                style={{ animationDelay: "0.2s" }}
-              ></div>
-            </div>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 };

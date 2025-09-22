@@ -9,8 +9,11 @@ import {
 } from "../invoice";
 import { invoiceSchema } from "./invoice-schema";
 
-export function createInvoiceTools(userId: string | null | undefined) {
-  const draftId = userId ? getSelectedDraft(userId) : null;
+export function createInvoiceTools(
+  userId: string | null | undefined,
+  draftId: string | null | undefined,
+) {
+  // const draftId = userId ? getSelectedDraft(userId) : null;
   return {
     selectInvoiceByNumber: {
       description:
@@ -166,34 +169,66 @@ export function createInvoiceTools(userId: string | null | undefined) {
         }
       },
     },
-    addLineItem: {
-      description: "Add a line item to the invoice",
+    addLineItems: {
+      description:
+        "Update the invoice items with a final array of line items. If available provide tax rate.",
       parameters: z.object({
-        description: z.string(),
-        quantity: z.number().min(1),
-        rate: z.number().min(0),
-        amount: z.number().min(0),
+        taxRate: z.number().optional(),
+        items: z.array(
+          z.object({
+            description: z.string(),
+            quantity: z.number().min(1),
+            rate: z.number().min(0),
+            amount: z.number().min(0),
+          }),
+        ),
       }),
-      execute: async ({ description, quantity, rate, amount }) => {
+      execute: async ({ items, taxRate }) => {
         try {
-          let draft: any = {
-            items: [{ description, quantity, rate, amount }],
-          };
+          let draft: any = { items, taxRate };
 
           if (userId && draftId) {
             draft = await createOrUpdateInvoice(draftId, userId, draft);
           }
-          return {
-            draft,
-          };
+
+          return { draft };
         } catch (error) {
-          console.log("error", error);
+          console.error("error", error);
           return {
             message: "Something went wrong while processing your request.",
           };
         }
       },
     },
+
+    // addLineItem: {
+    //   description: "Add a line item to the invoice",
+    //   parameters: z.object({
+    //     description: z.string(),
+    //     quantity: z.number().min(1),
+    //     rate: z.number().min(0),
+    //     amount: z.number().min(0),
+    //   }),
+    //   execute: async ({ description, quantity, rate, amount }) => {
+    //     try {
+    //       let draft: any = {
+    //         items: [{ description, quantity, rate, amount }],
+    //       };
+
+    //       if (userId && draftId) {
+    //         draft = await createOrUpdateInvoice(draftId, userId, draft);
+    //       }
+    //       return {
+    //         draft,
+    //       };
+    //     } catch (error) {
+    //       console.log("error", error);
+    //       return {
+    //         message: "Something went wrong while processing your request.",
+    //       };
+    //     }
+    //   },
+    // },
     setPaymentDetails: {
       description: "Set payment details and custom notes for the invoice",
       parameters: z.object({
@@ -241,6 +276,7 @@ export function createInvoiceTools(userId: string | null | undefined) {
             taxRate,
             tax,
             total,
+            status: "COMPLETE",
           });
 
           // Save Invoice

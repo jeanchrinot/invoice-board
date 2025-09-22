@@ -2,8 +2,8 @@ import Link from "next/link";
 import { useAssistantStore } from "@/stores/assistantStore";
 import { AlertTriangle, Crown, Zap } from "lucide-react";
 
-import { guestUserLimit } from "@/config/user";
 import { getRemainingTime } from "@/lib/utils";
+import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,15 +15,24 @@ import {
 import { Progress } from "@/components/ui/progress";
 
 export function SignUpCard() {
-  const { isInvoiceLimitReached, isTokenLimitReached, usage } =
-    useAssistantStore();
+  const { usage } = useAssistantStore();
+
+  const { usageLimit } = useUser();
+
+  const isTokenLimitReached = useAssistantStore((s) =>
+    s.isInvoiceLimitReached(usageLimit),
+  );
+
+  const isInvoiceLimitReached = useAssistantStore((s) =>
+    s.isInvoiceLimitReached(usageLimit),
+  );
 
   const invoiceProgress = Math.min(
-    (usage.invoicesCreated / guestUserLimit.invoices) * 100,
+    (usage.invoicesCreated / usageLimit.invoices) * 100,
     100,
   );
   const tokenProgress = Math.min(
-    (usage.tokensUsed / guestUserLimit.tokens) * 100,
+    (usage.tokensUsed / usageLimit.tokens) * 100,
     100,
   );
 
@@ -49,9 +58,9 @@ export function SignUpCard() {
                 Daily Invoices
               </span>
               <span
-                className={`font-semibold ${isInvoiceLimitReached() ? "text-red-600" : "text-muted-foreground"}`}
+                className={`font-semibold ${isInvoiceLimitReached ? "text-red-600" : "text-muted-foreground"}`}
               >
-                {usage.invoicesCreated}/{guestUserLimit.invoices}
+                {usage.invoicesCreated}/{usageLimit.invoices}
               </span>
             </div>
             <Progress
@@ -59,7 +68,7 @@ export function SignUpCard() {
               className="h-2"
               style={
                 {
-                  "--progress-foreground": isInvoiceLimitReached()
+                  "--progress-foreground": isInvoiceLimitReached
                     ? "hsl(0 84% 60%)"
                     : "hsl(221 83% 53%)",
                 } as React.CSSProperties
@@ -73,9 +82,9 @@ export function SignUpCard() {
                 Token Usage
               </span>
               <span
-                className={`font-semibold ${isTokenLimitReached() ? "text-red-600" : "text-muted-foreground"}`}
+                className={`font-semibold ${isTokenLimitReached ? "text-red-600" : "text-muted-foreground"}`}
               >
-                {usage.tokensUsed.toLocaleString()}/{guestUserLimit.tokens}
+                {usage.tokensUsed.toLocaleString()}/{usageLimit.tokens}
               </span>
             </div>
             <Progress
@@ -83,7 +92,7 @@ export function SignUpCard() {
               className="h-2"
               style={
                 {
-                  "--progress-foreground": isTokenLimitReached()
+                  "--progress-foreground": isTokenLimitReached
                     ? "hsl(0 84% 60%)"
                     : "hsl(221 83% 53%)",
                 } as React.CSSProperties
@@ -93,7 +102,7 @@ export function SignUpCard() {
         </div>
 
         {/* Limit Alert */}
-        {isTokenLimitReached() && (
+        {isTokenLimitReached && (
           <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-800/50 dark:bg-red-950/30">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
             <div className="text-xs leading-relaxed text-red-700 dark:text-red-300">
@@ -113,14 +122,14 @@ export function SignUpCard() {
             <div className="flex items-center gap-2 text-xs">
               <Zap className="h-4 w-4" />
               <span className="font-semibold">
-                {isTokenLimitReached() ? "Sign Up Now" : "Create Free Account"}
+                {isTokenLimitReached ? "Sign Up Now" : "Create Free Account"}
               </span>
             </div>
           </Button>
         </Link>
 
         {/* Benefits hint */}
-        {!isTokenLimitReached() && (
+        {!isTokenLimitReached && (
           <div className="space-y-1">
             <p className="text-center text-xs leading-relaxed text-muted-foreground">
               Free • No credit card required

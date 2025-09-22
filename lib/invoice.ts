@@ -2,6 +2,8 @@ import { DraftStatus, InvoiceType, Prisma, PrismaClient } from "@prisma/client";
 
 import { getSelectedDraft } from "@/lib/ai-memory";
 
+import { InvoiceItem } from "./invoice/invoice-schema";
+
 const prisma = new PrismaClient();
 
 export async function findInvoice(
@@ -350,13 +352,27 @@ export async function createOrUpdateInvoice(
     status?: string;
     date?: string;
     dueDate?: string;
+    items?: InvoiceItem[];
+    taxRate?: number;
   },
 ) {
+  let tax = 0;
+  let subtotal = 0;
+  let total = 0;
+
+  if (data.items?.length) {
+    const taxRate = data.taxRate || 0;
+    subtotal = data.items.reduce((sum, item) => sum + (item.amount || 0), 0);
+    tax = Math.round(subtotal * (taxRate / 100));
+    total = subtotal + tax;
+  }
+
   // Normalize date fields
   const normalizedData = {
     ...data,
     ...(data.date ? { date: new Date(data.date) } : {}),
     ...(data.dueDate ? { dueDate: new Date(data.dueDate) } : {}),
+    ...(data.items?.length ? { subtotal, tax, total } : {}),
   };
 
   if (invoiceId) {
@@ -475,11 +491,11 @@ export async function createInvoiceNumber(userId: string) {
   const paddedCount = String(nextCount).padStart(3, "0"); // 001, 002, 003...
 
   const now = new Date();
-  const day = String(now.getDate()).padStart(2, "0");
-  const month = String(now.getMonth() + 1).padStart(2, "0"); // 0-based
+  // const day = String(now.getDate()).padStart(2, "0");
+  // const month = String(now.getMonth() + 1).padStart(2, "0"); // 0-based
   const year = now.getFullYear();
 
-  return `INV-${day}-${month}-${year}-${paddedCount}`;
+  return `INV-${year}-${paddedCount}`;
 }
 
 export function getStatusClass(status: string) {

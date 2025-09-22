@@ -1,15 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { useAssistantStore } from "@/stores/assistantStore";
 import { useChat } from "@ai-sdk/react";
 import clsx from "clsx";
-import { Eye } from "lucide-react";
 import { nanoid } from "nanoid";
 
 import { useUser } from "@/hooks/use-user";
-
-// import { Invoice } from "@/lib/llm/invoice-schema";
 
 import ChatUI from "./chat-ui";
 import InvoicePreview from "./invoice-preview";
@@ -17,26 +15,59 @@ import InvoicePreview from "./invoice-preview";
 const AIAssistant = () => {
   const [mobileTab, setMobileTab] = useState<"chat" | "preview">("chat");
   const { user } = useUser();
+  const router = useRouter();
+  const { usageLimit } = useUser();
+
+  const isTokenLimitReached = useAssistantStore((s) =>
+    s.isInvoiceLimitReached(usageLimit),
+  );
 
   const {
     messages: storedMessages,
-    setMessages,
-    invoiceDraft,
+    currentInvoice,
     conversationId,
-    setInvoiceDraft,
-    mergeInvoiceDraft,
     setCurrentInvoice,
+    mergeInvoice,
     setIsGenerating,
     addTokens,
     incrementInvoicesCreated,
     appendMessage,
-    currentInvoice,
-    isInvoiceLimitReached,
-    isTokenLimitReached,
-    usage,
   } = useAssistantStore();
 
+  const params = useParams();
+  const invoiceId = params?.invoiceId as string | undefined;
+
   console.log("conversationId", conversationId);
+
+  const fetchInvoice = async (invoiceId: string) => {
+    try {
+      const response = await fetch(`/api/private/invoice/${invoiceId}`);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+
+      console.log("invoice", data);
+      if (data?.id) {
+        setIsGenerating(true);
+        setCurrentInvoice(data);
+        const timeout = setTimeout(() => {
+          // incrementInvoicesCreated(result.invoice.number);
+          setIsGenerating(false);
+        }, 2000);
+
+        return () => clearTimeout(timeout);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  useEffect(() => {
+    if (invoiceId) {
+      fetchInvoice(invoiceId);
+    }
+  }, [invoiceId]);
 
   const {
     messages,
@@ -52,7 +83,7 @@ const AIAssistant = () => {
     initialMessages: storedMessages,
     api: "/api/assistant",
     maxSteps: 10,
-    body: { draft: invoiceDraft },
+    body: { draft: currentInvoice },
     onFinish: (message, options) => {
       console.log("message", message);
       console.log("options", options);
@@ -84,18 +115,33 @@ const AIAssistant = () => {
             const result = part.toolInvocation.result;
 
             if (result.invoice) {
-              setIsGenerating(true);
-              const timeout = setTimeout(() => {
-                setCurrentInvoice(result.invoice);
-                // addInvoice(result.invoice);
-                setInvoiceDraft(null);
-                incrementInvoicesCreated(result.invoice.number);
-                setIsGenerating(false);
-              }, 3000);
+              if (user?.id && result.invoice?.id) {
+                //Redirect to invoice page
+                router.push(`/ai-assistant/${result.invoice?.id}`);
+              } else {
+                setIsGenerating(true);
+                const timeout = setTimeout(() => {
+                  setCurrentInvoice(result.invoice);
+                  // addInvoice(result.invoice);
+                  // setInvoiceDraft(null);
+                  incrementInvoicesCreated(result.invoice.number);
+                  setIsGenerating(false);
+                }, 2000);
 
-              return () => clearTimeout(timeout);
+                return () => clearTimeout(timeout);
+              }
             } else if (result.draft) {
-              mergeInvoiceDraft(result.draft);
+              if (user?.id && currentInvoice?.status == "COMPLETE") {
+                setIsGenerating(true);
+                const timeout = setTimeout(() => {
+                  mergeInvoice(result.draft);
+                  setIsGenerating(false);
+                }, 2000);
+
+                return () => clearTimeout(timeout);
+              } else {
+                mergeInvoice(result.draft);
+              }
             }
           }
         }
@@ -106,7 +152,7 @@ const AIAssistant = () => {
   // Custom handleSubmit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isTokenLimitReached()) return;
+    if (isTokenLimitReached) return;
     if (!input.trim()) return;
 
     // Append user message to Zustand store before sending
@@ -129,7 +175,7 @@ const AIAssistant = () => {
   };
 
   const handleQuickReply = (reply: string) => {
-    if (isTokenLimitReached()) return;
+    if (isTokenLimitReached) return;
     if (!reply.trim()) return;
 
     // Append user message to Zustand store before sending

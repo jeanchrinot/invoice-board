@@ -11,7 +11,7 @@ export const POST = auth(async (req) => {
   const { messages, draft } = await req.json();
   const user = await getCurrentUser();
 
-  const invoiceTools = createInvoiceTools(user?.id);
+  const invoiceTools = createInvoiceTools(user?.id, draft?.id);
 
   console.log("messages", messages);
   console.log("draft", draft);

@@ -11,6 +11,7 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 
 import { quickReplies } from "@/config/chat";
+import { useUser } from "@/hooks/use-user";
 
 interface ChatUIProps {
   isAuthenticated: boolean;
@@ -37,8 +38,15 @@ const ChatUI: React.FC<ChatUIProps> = ({
   isLoading = false,
   status,
 }) => {
-  const { isInvoiceLimitReached, isTokenLimitReached, usage } =
-    useAssistantStore();
+  // const { isInvoiceLimitReached, isTokenLimitReached, usage } =
+  //   useAssistantStore();
+
+  const { usageLimit } = useUser();
+
+  const isTokenLimitReached = useAssistantStore((s) =>
+    s.isInvoiceLimitReached(usageLimit),
+  );
+
   const [isRecordingSupported, setIsRecordingSupported] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -80,7 +88,7 @@ const ChatUI: React.FC<ChatUIProps> = ({
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       // Only submit if not loading, not at token limit, and has input
-      if (!isLoading && !isTokenLimitReached() && input.trim()) {
+      if (!isLoading && !isTokenLimitReached && input.trim()) {
         // Create a synthetic form event or call submit directly
         const form = e.currentTarget.form;
         if (form) {
@@ -91,7 +99,7 @@ const ChatUI: React.FC<ChatUIProps> = ({
   };
 
   const handleQuickReply = (reply: string) => {
-    if (!isLoading && !isTokenLimitReached() && reply.trim()) {
+    if (!isLoading && !isTokenLimitReached && reply.trim()) {
       onQuickReply(reply);
     }
   };
@@ -256,9 +264,9 @@ const ChatUI: React.FC<ChatUIProps> = ({
                 value={input}
                 onKeyDown={handleKeyDown}
                 onChange={handleInputChange}
-                placeholder={`${isTokenLimitReached() ? "You have reached your token limit. Sign up now to unlock full power." : "Ask AI assistant anything..."}`}
+                placeholder={`${isTokenLimitReached ? "You have reached your token limit. Sign up now to unlock full power." : "Ask AI assistant anything..."}`}
                 className="min-h-[48px] w-full resize-none bg-transparent p-3 text-gray-900 placeholder:text-gray-400 focus:outline-none dark:text-gray-100"
-                disabled={isLoading || isTokenLimitReached()}
+                disabled={isLoading || isTokenLimitReached}
                 rows={3}
               ></textarea>
               <div className="flex items-center space-x-2 pb-2">

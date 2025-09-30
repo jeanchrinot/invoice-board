@@ -89,43 +89,53 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
     );
   };
 
+  const Icon = () => {
+    return (
+      <Link href="/" className="flex items-center space-x-1.5">
+        <Image
+          src="/InvoiceBoard-Icon.png"
+          className="w-[160px]"
+          width={500}
+          height={500}
+          alt="InvoiceBoard Icon"
+        />
+      </Link>
+    );
+  };
+
   return (
     <TooltipProvider delayDuration={0}>
-      <div className="sticky top-0 h-full bg-background dark:bg-black/20">
+      <div className="sticky top-0 z-50 h-full bg-background dark:bg-black/20">
         <ScrollArea className="h-full overflow-y-auto border-r">
           <aside
             className={cn(
               isSidebarExpanded ? "w-[220px] xl:w-[260px]" : "w-[68px]",
-              "hidden h-screen md:block",
+              "relative hidden h-screen pb-10 md:block",
             )}
           >
             <div className="flex h-full max-h-screen flex-1 flex-col gap-2">
-              <div className="flex h-14 items-center p-4 lg:h-[60px]">
-                {isSidebarExpanded ? <Logo /> : null}
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="ml-auto size-9 lg:size-8"
-                  onClick={toggleSidebar}
-                >
-                  {isSidebarExpanded ? (
-                    <PanelLeftClose
-                      size={18}
-                      className="stroke-muted-foreground"
-                    />
-                  ) : (
-                    <PanelRightClose
-                      size={18}
-                      className="stroke-muted-foreground"
-                    />
-                  )}
-                  <span className="sr-only">Toggle Sidebar</span>
-                </Button>
+              <span
+                className={`relative z-50 flex cursor-pointer items-center rounded-br-md rounded-tr-md px-2 py-1 ${isSidebarExpanded ? "justify-end" : "justify-center"}`}
+                onClick={toggleSidebar}
+              >
+                {isSidebarExpanded ? (
+                  <PanelLeftClose
+                    size={18}
+                    className="stroke-muted-foreground"
+                  />
+                ) : (
+                  <PanelRightClose
+                    size={18}
+                    className="stroke-muted-foreground"
+                  />
+                )}
+                <span className="sr-only">Toggle Sidebar</span>
+              </span>
+              <div className="relative flex h-14 items-center p-4 lg:h-[60px]">
+                {isSidebarExpanded ? <Logo /> : <Icon />}
               </div>
 
               <nav className="flex flex-1 flex-col gap-8 px-4 pt-4">
-                <ModeToggle />
                 {links.map((section) => {
                   if (section.items?.length == 0) return;
                   return (
@@ -173,7 +183,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                       key={`link-tooltip-${item.title}`}
                                       href={item.disabled ? "#" : item.href}
                                       className={cn(
-                                        "flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-primary",
+                                        "group flex items-center gap-3 rounded-md py-2 text-sm font-medium hover:bg-primary",
                                         path === item.href
                                           ? "bg-primary"
                                           : "text-muted-foreground hover:text-accent-foreground",
@@ -181,7 +191,9 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                                           "cursor-not-allowed opacity-80 hover:bg-transparent hover:text-muted-foreground",
                                       )}
                                     >
-                                      <span className="flex size-full items-center justify-center text-white">
+                                      <span
+                                        className={`flex size-full items-center justify-center group-hover:text-white ${path === item.href ? "text-white" : "text-muted-foreground"}`}
+                                      >
                                         <Icon className="size-5" />
                                       </span>
                                     </Link>
@@ -201,15 +213,18 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                     </section>
                   );
                 })}
-                <section className="flex flex-col gap-0.5">
-                  <UserAccountNav />
-                </section>
+                <ModeToggle />
               </nav>
 
-              <div className="mt-auto xl:p-4">
+              <div className="mb-10 mt-auto xl:p-4">
                 {isSidebarExpanded && user ? <UpgradeCard /> : null}
                 {isSidebarExpanded && !user ? <SignUpCard /> : null}
               </div>
+              <section
+                className={`fixed bottom-0 flex flex-col items-center justify-center gap-0.5 px-4 py-2 ${isSidebarExpanded ? "w-[220px] bg-primary xl:w-[260px]" : "w-[68px]"}`}
+              >
+                <UserAccountNav isSidebarExpanded={isSidebarExpanded} />
+              </section>
             </div>
           </aside>
         </ScrollArea>

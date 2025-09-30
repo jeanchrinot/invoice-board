@@ -25,30 +25,30 @@ export const sidebarLinks: SidebarNavItem[] = [
         title: "Invoices",
         authorizeOnly: UserRole.USER,
       },
-      {
-        href: "/dashboard/quotes",
-        icon: "receiptEuro",
-        title: "Quotes",
-        authorizeOnly: UserRole.USER,
-      },
-      {
-        href: "/dashboard/proposals",
-        icon: "receiptText",
-        title: "Proposals",
-        authorizeOnly: UserRole.USER,
-      },
+      // {
+      //   href: "/dashboard/quotes",
+      //   icon: "receiptEuro",
+      //   title: "Quotes",
+      //   authorizeOnly: UserRole.USER,
+      // },
+      // {
+      //   href: "/dashboard/proposals",
+      //   icon: "receiptText",
+      //   title: "Proposals",
+      //   authorizeOnly: UserRole.USER,
+      // },
       {
         href: "/dashboard/clients",
         icon: "bookUser",
         title: "Clients",
         authorizeOnly: UserRole.USER,
       },
-      {
-        href: "/dashboard/analytics",
-        icon: "lineChart",
-        title: "Analytics",
-        authorizeOnly: UserRole.USER,
-      },
+      // {
+      //   href: "/dashboard/analytics",
+      //   icon: "lineChart",
+      //   title: "Analytics",
+      //   authorizeOnly: UserRole.USER,
+      // },
     ],
   },
   {

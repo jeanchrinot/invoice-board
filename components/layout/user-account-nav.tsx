@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { UserAvatar } from "@/components/shared/user-avatar";
 
-export function UserAccountNav() {
+export function UserAccountNav({ isSidebarExpanded }) {
   const { data: session } = useSession();
   const user = session?.user;
 
@@ -119,11 +119,27 @@ export function UserAccountNav() {
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger>
-        <UserAvatar
-          user={{ name: user.name || null, image: user.image || null }}
-          className="size-8 border"
-        />
+      <DropdownMenuTrigger className="focus:outline-none focus:ring-0">
+        <div
+          className={`flex items-center justify-start ${isSidebarExpanded ? "gap-2 px-4 py-2" : ""}`}
+        >
+          <UserAvatar
+            user={{ name: user.name || null, image: user.image || null }}
+            className="size-8 border border-primary bg-primary"
+          />
+          {isSidebarExpanded && (
+            <div className="flex flex-col items-start justify-start space-y-1 text-left leading-none">
+              {user.name && (
+                <p className="font-medium text-white">{user.name}</p>
+              )}
+              {user.email && (
+                <p className="w-[200px] truncate text-sm text-gray-200">
+                  {user?.email}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <div className="flex items-center justify-start gap-2 p-2">

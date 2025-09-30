@@ -11,7 +11,7 @@ export default async function AuthLayout({ children }: AuthLayoutProps) {
       {children}
       <div className="absolute right-5 top-5 flex gap-2">
         <ModeToggle />
-        <UserAccountNav />
+        {/* <UserAccountNav /> */}
       </div>
     </div>
   );

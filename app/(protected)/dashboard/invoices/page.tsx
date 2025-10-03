@@ -13,7 +13,7 @@ export const metadata = constructMetadata({
 export default async function DashboardInvoicesPage() {
   return (
     <PageContentWrapper>
-      <DashboardHeader heading="My Invoices" text={`Manage your invoices.`} />
+      <DashboardHeader heading="Invoices" text={`Manage your invoices.`} />
       <InvoicesList />
     </PageContentWrapper>
   );

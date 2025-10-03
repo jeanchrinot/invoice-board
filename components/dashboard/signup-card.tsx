@@ -17,10 +17,12 @@ import { Progress } from "@/components/ui/progress";
 export function SignUpCard() {
   const { usage } = useAssistantStore();
 
+  console.log("usage", usage);
+
   const { usageLimit } = useUser();
 
   const isTokenLimitReached = useAssistantStore((s) =>
-    s.isInvoiceLimitReached(usageLimit),
+    s.isTokenLimitReached(usageLimit),
   );
 
   const isInvoiceLimitReached = useAssistantStore((s) =>
@@ -38,7 +40,7 @@ export function SignUpCard() {
 
   return (
     <Card className="md:max-xl:rounded-none md:max-xl:border-none md:max-xl:shadow-none">
-      <CardHeader className="pb-3 md:max-xl:px-4">
+      <CardHeader className="pb-3 md:max-xl:px-2">
         <div className="flex items-center gap-2">
           <Crown className="size-4 text-blue-600" />
           <CardTitle className="text-md">Create Your Account</CardTitle>
@@ -49,13 +51,13 @@ export function SignUpCard() {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-4 md:max-xl:px-4">
+      <CardContent className="space-y-4 md:max-xl:px-2">
         {/* Usage Progress */}
         <div className="space-y-3">
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
               <span className="font-medium text-muted-foreground">
-                Daily Invoices
+                Invoices
               </span>
               <span
                 className={`font-semibold ${isInvoiceLimitReached ? "text-red-600" : "text-muted-foreground"}`}
@@ -133,10 +135,6 @@ export function SignUpCard() {
           <div className="space-y-1">
             <p className="text-center text-xs leading-relaxed text-muted-foreground">
               Free • No credit card required
-            </p>
-            <p className="text-center text-xs font-medium text-amber-600 dark:text-amber-500">
-              ⚠️ Guest invoices are deleted in{" "}
-              {getRemainingTime(usage.lastReset)}
             </p>
           </div>
         )}

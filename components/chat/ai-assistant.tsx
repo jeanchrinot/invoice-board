@@ -17,9 +17,10 @@ const AIAssistant = () => {
   const { user } = useUser();
   const router = useRouter();
   const { usageLimit } = useUser();
+  const [isSavingGuestInvoice, setIsSavingGuestInvoice] = useState(false);
 
   const isTokenLimitReached = useAssistantStore((s) =>
-    s.isInvoiceLimitReached(usageLimit),
+    s.isTokenLimitReached(usageLimit),
   );
 
   const {
@@ -63,11 +64,48 @@ const AIAssistant = () => {
     }
   };
 
+  const saveGuestInvoice = async () => {
+    setIsSavingGuestInvoice(true);
+    try {
+      const res = await fetch("/api/invoices", {
+        method: "POST",
+        body: JSON.stringify({ draft: currentInvoice }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        console.log("saved data:", data);
+        setCurrentInvoice(data);
+        if (data.id) {
+          //Redirect to invoice page
+          router.push(`/ai-assistant/${data.id}`);
+        }
+      } else {
+        console.log("Unable to save invoice:", res.status);
+      }
+    } catch (error) {
+      console.log("unable to save invoice...", error);
+    }
+    setIsSavingGuestInvoice(false);
+  };
+
   useEffect(() => {
     if (invoiceId) {
       fetchInvoice(invoiceId);
     }
   }, [invoiceId]);
+
+  // Save invoice to database after guest is signed in
+  useEffect(() => {
+    if (
+      user?.id &&
+      currentInvoice &&
+      !currentInvoice.id &&
+      !invoiceId &&
+      !isSavingGuestInvoice
+    ) {
+      saveGuestInvoice();
+    }
+  }, [user, currentInvoice, invoiceId, isSavingGuestInvoice]);
 
   const {
     messages,

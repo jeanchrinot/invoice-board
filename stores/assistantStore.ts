@@ -54,7 +54,7 @@ interface AssistantStore {
   isInvoiceLimitReached: (usageLimit: UsageLimit) => boolean;
   isTokenLimitReached: (usageLimit: UsageLimit) => boolean;
   // Reset everything
-  resetIfExpired: () => void;
+  // resetIfExpired: () => void;
 }
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
@@ -154,44 +154,44 @@ export const useAssistantStore = create<AssistantStore>()(
         });
       },
 
-      resetIfExpired: () => {
-        const now = Date.now();
-        const { usage } = get();
-        if (!usage.lastReset) {
-          const { invoicesCreated, tokensUsed } = get().usage;
-          set({
-            usage: {
-              invoicesCreated: invoicesCreated,
-              tokensUsed: tokensUsed,
-              lastReset: now,
-            },
-          });
-        }
-        if (now - usage.lastReset > ONE_DAY_MS) {
-          set({
-            currentInvoice: null,
-            // invoiceDraft: null,
-            isGenerating: false,
-            messages: [],
-            invoices: [],
-            conversationId: nanoid(),
-            usage: {
-              invoicesCreated: 0,
-              tokensUsed: 0,
-              lastReset: now,
-            },
-          });
-        }
-      },
+      // resetIfExpired: () => {
+      //   const now = Date.now();
+      //   const { usage } = get();
+      //   if (!usage.lastReset) {
+      //     const { invoicesCreated, tokensUsed } = get().usage;
+      //     set({
+      //       usage: {
+      //         invoicesCreated: invoicesCreated,
+      //         tokensUsed: tokensUsed,
+      //         lastReset: now,
+      //       },
+      //     });
+      //   }
+      //   if (now - usage.lastReset > ONE_DAY_MS) {
+      //     set({
+      //       currentInvoice: null,
+      //       // invoiceDraft: null,
+      //       isGenerating: false,
+      //       messages: [],
+      //       invoices: [],
+      //       conversationId: nanoid(),
+      //       usage: {
+      //         invoicesCreated: 0,
+      //         tokensUsed: 0,
+      //         lastReset: now,
+      //       },
+      //     });
+      //   }
+      // },
 
       isInvoiceLimitReached: (usageLimit: UsageLimit) => {
-        get().resetIfExpired();
+        // get().resetIfExpired();
         const { invoicesCreated } = get().usage;
         return invoicesCreated >= usageLimit.invoices;
       },
 
       isTokenLimitReached: (usageLimit: UsageLimit) => {
-        get().resetIfExpired();
+        // get().resetIfExpired();
         const { tokensUsed } = get().usage;
         return tokensUsed >= usageLimit.tokens;
       },

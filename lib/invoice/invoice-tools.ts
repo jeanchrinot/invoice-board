@@ -1,3 +1,4 @@
+import { number } from "prop-types";
 import { z } from "zod";
 
 import { getSelectedDraft, setSelectedDraft } from "../ai-memory";
@@ -52,17 +53,20 @@ export function createInvoiceTools(
     },
 
     createInvoiceDraft: {
-      description: "Initialize a new invoice draft.",
-      parameters: z.object({}),
+      description:
+        "Initialize a new invoice draft with a generated invoice number.",
+      parameters: z.object({
+        number: z.string(),
+      }),
       execute: async () => {
         try {
           // Save Invoice
-          let draft: any = {};
+          let draft: any = { number };
           if (userId) {
-            const number = await createInvoiceNumber(userId);
+            const newNumber = await createInvoiceNumber(userId);
             draft = await createOrUpdateInvoice(null, userId, {
               ...draft,
-              number,
+              number: newNumber,
             });
             setSelectedDraft(userId, draft.id);
           }
@@ -242,6 +246,7 @@ export function createInvoiceTools(
           if (userId && draftId) {
             draft = await createOrUpdateInvoice(draftId, userId, draft);
           }
+          console.log("draft", draft);
           return {
             draft,
           };
@@ -288,6 +293,8 @@ export function createInvoiceTools(
               finalizedInvoice,
             );
           }
+
+          console.log("tools::invoice:", invoice);
 
           return { invoice };
         } catch (error) {

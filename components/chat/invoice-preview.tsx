@@ -1,20 +1,37 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
+import Link from "next/link";
 import { useAssistantStore } from "@/stores/assistantStore";
 import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
 import {
+  Copy,
   Download,
   Edit3,
+  ExternalLink,
   Receipt,
   Share2,
   Sparkles,
   Stars,
   Wand2,
 } from "lucide-react";
+import { toast } from "sonner";
+
+import { useUser } from "@/hooks/use-user";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const InvoicePreview: React.FC = () => {
   const invoiceRef = useRef<HTMLDivElement>(null);
   const { currentInvoice, isGenerating } = useAssistantStore();
+  const { user } = useUser();
+
+  const [openAuthDialog, setOpenAuthDialog] = useState(false);
+  const [openShareDialog, setOpenShareDialog] = useState(false);
 
   const downloadPDF = async () => {
     const element = document.getElementById("invoice-export");
@@ -50,6 +67,57 @@ const InvoicePreview: React.FC = () => {
     pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
     pdf.save(`Invoice-${currentInvoice?.number}.pdf`);
     element.style.display = "none";
+  };
+
+  const handleShare = () => {
+    if (!user?.id) {
+      setOpenAuthDialog(true);
+    } else {
+      setOpenShareDialog(true);
+    }
+  };
+
+  const handleDownload = () => {
+    if (!user?.id) {
+      setOpenAuthDialog(true);
+    } else {
+      downloadPDF();
+    }
+  };
+
+  const handleCopyLink = async () => {
+    if (
+      currentInvoice?.status === "IN_PROGRESS" ||
+      !user?.id ||
+      !currentInvoice?.id
+    ) {
+      toast.error("Unable to copy link.");
+    } else {
+      const link = `${window.location.origin}/invoice/${currentInvoice?.id}`;
+      try {
+        await navigator.clipboard.writeText(link);
+        toast.success("Link copied to clipboard!");
+      } catch (error) {
+        console.error("Failed to copy link:", error);
+        toast.error("Failed to copy link.");
+      }
+    }
+    setOpenShareDialog(false);
+  };
+
+  const handleOpenLink = () => {
+    if (
+      currentInvoice?.status === "IN_PROGRESS" ||
+      !user?.id ||
+      !currentInvoice?.id
+    ) {
+      toast.error("Unable to copy link.");
+    } else {
+      const link = `${window.location.origin}/invoice/${currentInvoice?.id}`;
+      window.open(link, "_blank");
+    }
+
+    setOpenShareDialog(false);
   };
 
   const formatDate = (dateString: string | undefined) => {
@@ -100,7 +168,11 @@ const InvoicePreview: React.FC = () => {
     );
   }
 
-  if (!currentInvoice || currentInvoice?.status === "IN_PROGRESS") {
+  if (
+    !currentInvoice ||
+    !currentInvoice?.status ||
+    currentInvoice?.status === "IN_PROGRESS"
+  ) {
     return (
       <div className="h-full w-full px-4 py-6">
         <div className="flex h-full items-center justify-center rounded-2xl border border-gray-300 bg-gradient-to-br from-gray-100/50 via-slate-100/50 to-gray-200/50 px-6 dark:border-gray-700/50 dark:from-gray-900/50 dark:via-slate-900/50 dark:to-gray-800/50">
@@ -109,9 +181,9 @@ const InvoicePreview: React.FC = () => {
               <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
                 <Receipt className="h-10 w-10 text-white" />
               </div>
-              <div className="absolute -right-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
+              {/* <div className="absolute -right-1 -top-1 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600">
                 <Stars className="h-4 w-4 text-white" />
-              </div>
+              </div> */}
             </div>
             <h3 className="mb-2 text-xl font-semibold text-gray-700 dark:text-gray-300">
               Invoice Preview
@@ -158,8 +230,10 @@ const InvoicePreview: React.FC = () => {
               <p className="font-medium">{currentInvoice.billTo?.name}</p>
               <p>{currentInvoice.billTo?.address}</p>
               <p>
-                {currentInvoice.billTo?.city}, {currentInvoice.billTo?.state}{" "}
-                {currentInvoice.billTo?.zip}
+                {currentInvoice.billTo?.city
+                  ? `${currentInvoice.billTo?.city},`
+                  : ""}{" "}
+                {currentInvoice.billTo?.state} {currentInvoice.billTo?.zip}
               </p>
               <p>{currentInvoice.billTo?.email}</p>
               <p>{currentInvoice.billTo?.phone}</p>
@@ -173,8 +247,10 @@ const InvoicePreview: React.FC = () => {
               <p className="font-medium">{currentInvoice.from?.name}</p>
               <p>{currentInvoice.from?.address}</p>
               <p>
-                {currentInvoice.from?.city}, {currentInvoice.from?.state}{" "}
-                {currentInvoice.from?.zip}
+                {currentInvoice.from?.city
+                  ? `${currentInvoice.from?.city},`
+                  : ""}{" "}
+                {currentInvoice.from?.state} {currentInvoice.from?.zip}
               </p>
               <p>{currentInvoice.from?.email}</p>
               <p>{currentInvoice.from?.phone}</p>
@@ -241,7 +317,7 @@ const InvoicePreview: React.FC = () => {
                 {currentInvoice.currency} {currentInvoice.subtotal}
               </span>
             </div>
-            {currentInvoice.taxRate && currentInvoice.taxRate > 0 && (
+            {currentInvoice.taxRate != null && currentInvoice.taxRate > 0 && (
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-400">
                   Tax ({currentInvoice.taxRate}%):
@@ -295,12 +371,15 @@ const InvoicePreview: React.FC = () => {
       >
         {/* Action Buttons */}
         <div className="flex justify-end space-x-3 bg-gray-50 p-2 dark:bg-gray-800/50">
-          <button className="flex items-center space-x-2 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+          <button
+            onClick={handleShare}
+            className="flex items-center space-x-2 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+          >
             <Share2 className="h-4 w-4" />
             <span>Share</span>
           </button>
           <button
-            onClick={downloadPDF}
+            onClick={handleDownload}
             className="flex items-center space-x-2 rounded-lg bg-blue-600 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-700"
           >
             <Download className="h-4 w-4" />
@@ -317,6 +396,48 @@ const InvoicePreview: React.FC = () => {
       >
         <InvoiceContent />
       </div>
+
+      {/* Auth Required Dialog */}
+      <Dialog open={openAuthDialog} onOpenChange={setOpenAuthDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Sign up to download and share</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Please create an account or log in to access this feature.
+          </p>
+          <div className="mt-4 flex justify-end space-x-2">
+            <Button
+              variant="secondary"
+              onClick={() => setOpenAuthDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Link href="/register">
+              <Button>Sign up</Button>
+            </Link>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Options Dialog */}
+      <Dialog open={openShareDialog} onOpenChange={setOpenShareDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Share Invoice</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col space-y-2">
+            <Button variant="outline" onClick={handleCopyLink}>
+              <Copy className="mr-2 h-4 w-4" />
+              Copy Link
+            </Button>
+            <Button variant="outline" onClick={handleOpenLink}>
+              <ExternalLink className="mr-2 h-4 w-4" />
+              Open Link
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

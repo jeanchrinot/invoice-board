@@ -1,9 +1,9 @@
 import { getCurrentUser } from "@/lib/session";
 import { constructMetadata } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import BasicCards from "@/components/dashboard/basic-cards";
 import { DashboardHeader } from "@/components/dashboard/header";
+import InvoicesList from "@/components/dashboard/invoices-list";
 import { PageContentWrapper } from "@/components/dashboard/page-content-wrapper";
-import { EmptyPlaceholder } from "@/components/shared/empty-placeholder";
 
 export const metadata = constructMetadata({
   title: "Dashboard | InvoiceBoard",
@@ -16,17 +16,11 @@ export default async function DashboardPage() {
   return (
     <PageContentWrapper>
       <DashboardHeader
-        heading="Dashboardx"
-        text={`Current Role : ${user?.role} — Change your role in settings.`}
+        heading="Dashboard"
+        text={`Welcome back, ${user?.name}! Get a quick overview of your invoicing activity.`}
       />
-      <EmptyPlaceholder>
-        <EmptyPlaceholder.Icon name="post" />
-        <EmptyPlaceholder.Title>No content created</EmptyPlaceholder.Title>
-        <EmptyPlaceholder.Description>
-          You don&apos;t have any content yet. Start creating content.
-        </EmptyPlaceholder.Description>
-        <Button>Add Content</Button>
-      </EmptyPlaceholder>
+      <BasicCards />
+      <InvoicesList />
     </PageContentWrapper>
   );
 }

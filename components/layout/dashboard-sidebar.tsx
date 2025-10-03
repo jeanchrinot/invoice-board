@@ -38,25 +38,6 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
   const path = usePathname();
   const { user } = useUser();
 
-  // NOTE: Use this if you want save in local storage -- Credits: Hosna Qasmei
-  //
-  // const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
-  //   if (typeof window !== "undefined") {
-  //     const saved = window.localStorage.getItem("sidebarExpanded");
-  //     return saved !== null ? JSON.parse(saved) : true;
-  //   }
-  //   return true;
-  // });
-
-  // useEffect(() => {
-  //   if (typeof window !== "undefined") {
-  //     window.localStorage.setItem(
-  //       "sidebarExpanded",
-  //       JSON.stringify(isSidebarExpanded),
-  //     );
-  //   }
-  // }, [isSidebarExpanded]);
-
   const { isTablet } = useMediaQuery();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(!isTablet);
 
@@ -113,7 +94,7 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
               "relative hidden h-screen pb-10 md:block",
             )}
           >
-            <div className="flex h-full max-h-screen flex-1 flex-col gap-2">
+            <div className="flex flex-1 flex-col gap-2 pb-16">
               <span
                 className={`relative z-50 flex cursor-pointer items-center rounded-br-md rounded-tr-md px-2 py-1 ${isSidebarExpanded ? "justify-end" : "justify-center"}`}
                 onClick={toggleSidebar}
@@ -216,12 +197,13 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
                 <ModeToggle />
               </nav>
 
-              <div className="mb-10 mt-auto xl:p-4">
+              <div className="mt-auto xl:p-4">
                 {isSidebarExpanded && user ? <UpgradeCard /> : null}
                 {isSidebarExpanded && !user ? <SignUpCard /> : null}
               </div>
+              {/* This section is fixed and it covers the bottom part of the sidebar. So I need to add some padding or margin bottom to some of the above elements to make the sidebar scroll further */}
               <section
-                className={`fixed bottom-0 flex flex-col items-center justify-center gap-0.5 px-4 py-2 ${isSidebarExpanded ? "w-[220px] bg-primary xl:w-[260px]" : "w-[68px]"}`}
+                className={`fixed bottom-0 flex ${user?.id ? "h-16" : ""} flex-col items-center justify-center gap-0.5 px-4 py-2 ${isSidebarExpanded ? "w-[220px] bg-primary xl:w-[260px]" : "w-[68px]"}`}
               >
                 <UserAccountNav isSidebarExpanded={isSidebarExpanded} />
               </section>

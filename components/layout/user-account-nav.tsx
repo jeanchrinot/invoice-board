@@ -27,7 +27,22 @@ export function UserAccountNav({ isSidebarExpanded }) {
 
   const { isMobile } = useMediaQuery();
 
-  if (!user) return <></>;
+  if (!user) {
+    return (
+      <Link
+        href="/login"
+        className={`flex items-center justify-start ${isSidebarExpanded ? "gap-2" : ""}`}
+      >
+        <UserAvatar
+          user={{ name: null, image: null }}
+          className="size-8 border border-primary bg-muted"
+        />
+        {isSidebarExpanded && (
+          <span className="text-sm font-medium text-white">Log in</span>
+        )}
+      </Link>
+    );
+  }
 
   if (isMobile) {
     return (

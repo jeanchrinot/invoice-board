@@ -5,11 +5,12 @@ import { getUserSubscriptionPlan } from "@/lib/subscription";
 import { constructMetadata } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { DashboardHeader } from "@/components/dashboard/header";
+import { PageContentWrapper } from "@/components/dashboard/page-content-wrapper";
 import { BillingInfo } from "@/components/pricing/billing-info";
 import { Icons } from "@/components/shared/icons";
 
 export const metadata = constructMetadata({
-  title: "Billing – SaaS Starter",
+  title: "Billing | InvoiceBoard",
   description: "Manage billing and your subscription plan.",
 });
 
@@ -24,13 +25,13 @@ export default async function BillingPage() {
   }
 
   return (
-    <>
+    <PageContentWrapper>
       <DashboardHeader
         heading="Billing"
         text="Manage billing and your subscription plan."
       />
       <div className="grid gap-8">
-        <Alert className="!pl-14">
+        {/* <Alert className="!pl-14">
           <Icons.warning />
           <AlertTitle>This is a demo app.</AlertTitle>
           <AlertDescription className="text-balance">
@@ -46,9 +47,9 @@ export default async function BillingPage() {
             </a>
             .
           </AlertDescription>
-        </Alert>
+        </Alert> */}
         <BillingInfo userSubscriptionPlan={userSubscriptionPlan} />
       </div>
-    </>
+    </PageContentWrapper>
   );
 }

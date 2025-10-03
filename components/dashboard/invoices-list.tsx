@@ -1,23 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import {
-  Calendar,
-  CheckCircle,
-  Clock,
-  Copy,
-  DollarSign,
-  Edit,
-  ExternalLink,
-  FileText,
-  MoreHorizontal,
-  Share2,
-} from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-
-import { InvoicesTable } from "./invoices-table";
+import { InvoicesTable } from "./invoices/invoices-table";
 
 interface Invoice {
   id: string;
@@ -72,7 +57,7 @@ const InvoicesList: React.FC = () => {
 
   const fetchInvoices = async () => {
     try {
-      const response = await fetch("/api/invoices");
+      const response = await fetch("/api/invoices?limit=5");
       const data = await response.json();
       setInvoices(data);
     } catch (error) {
@@ -83,7 +68,7 @@ const InvoicesList: React.FC = () => {
   };
 
   return (
-    <InvoicesTable invoices={invoices} loading={loading} showViewAll={false} />
+    <InvoicesTable invoices={invoices} loading={loading} showViewAll={true} />
   );
 };
 

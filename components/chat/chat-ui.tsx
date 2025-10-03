@@ -44,7 +44,7 @@ const ChatUI: React.FC<ChatUIProps> = ({
   const { usageLimit } = useUser();
 
   const isTokenLimitReached = useAssistantStore((s) =>
-    s.isInvoiceLimitReached(usageLimit),
+    s.isTokenLimitReached(usageLimit),
   );
 
   const [isRecordingSupported, setIsRecordingSupported] = useState(true);
@@ -118,7 +118,7 @@ const ChatUI: React.FC<ChatUIProps> = ({
             </div>
             <div>
               <h1 className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-lg font-semibold text-transparent">
-                Invoice AI Assistant
+                AI Invoice Assistant
               </h1>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 {isAuthenticated ? `Welcome back, ${userName}` : "Guest Mode"}

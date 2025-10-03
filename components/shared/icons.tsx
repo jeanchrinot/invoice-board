@@ -36,6 +36,7 @@ import {
   SunMedium,
   Trash,
   User,
+  Users,
   X,
 } from "lucide-react";
 
@@ -60,6 +61,7 @@ export const Icons = {
   receiptText: ReceiptText,
   receiptEuro: ReceiptEuro,
   bookUser: BookUser,
+  users: Users,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

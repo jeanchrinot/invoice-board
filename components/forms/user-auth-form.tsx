@@ -118,7 +118,7 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
         email: userEmail,
         otp: data.otp,
         redirect: false,
-        callbackUrl: searchParams?.get("from") || "/",
+        callbackUrl: searchParams?.get("from") || "/ai-assistant",
       });
 
       if (!signInResult?.ok) {
@@ -128,7 +128,7 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
       toast.success("Successfully signed in!");
 
       // Redirect to callback URL
-      window.location.href = searchParams?.get("from") || "/";
+      window.location.href = searchParams?.get("from") || "/ai-assistant";
     } catch (error) {
       toast.error("Invalid code", {
         description:

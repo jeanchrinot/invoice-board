@@ -60,6 +60,7 @@ export const invoiceSchema = z.object({
 });
 
 export interface Invoice {
+  id?: string;
   number: string;
   status: string;
   date: string;

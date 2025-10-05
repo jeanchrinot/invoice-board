@@ -33,6 +33,8 @@ const AIAssistant = () => {
     addTokens,
     incrementInvoicesCreated,
     appendMessage,
+    isGenerating,
+    usage,
   } = useAssistantStore();
 
   const params = useParams();
@@ -135,6 +137,7 @@ const AIAssistant = () => {
 
       if (options?.usage?.totalTokens) {
         addTokens(options.usage.totalTokens);
+        saveTokens(options.usage.totalTokens);
       }
 
       if (options?.finishReason) {
@@ -186,6 +189,30 @@ const AIAssistant = () => {
       }
     },
   });
+
+  // Save tokens
+  const saveTokens = async (tokens: number) => {
+    try {
+      const res = fetch("/api/user/usage/tokens", {
+        method: "POST",
+        body: JSON.stringify({ tokens: tokens }),
+      });
+      // if (res.ok) {
+      //   const data = await res.json();
+      //   console.log("saved tokens:", data);
+      // } else {
+      //   console.log("Unable to save tokens:", res.status);
+      // }
+    } catch (error) {
+      console.log("unable to save tokens...", error);
+    }
+  };
+
+  // useEffect(() => {
+  //   if (usage.tokens) {
+  //     saveTokens(usage.tokens);
+  //   }
+  // }, [usage.tokens]);
 
   // Custom handleSubmit
   const handleSubmit = async (e: React.FormEvent) => {
@@ -266,7 +293,10 @@ const AIAssistant = () => {
           )}
         >
           <div className="h-full">
-            <InvoicePreview />
+            <InvoicePreview
+              invoice={currentInvoice}
+              isGenerating={isGenerating}
+            />
           </div>
         </div>
       </div>

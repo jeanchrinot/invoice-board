@@ -36,8 +36,12 @@ export async function POST(req: Request) {
     }
 
     const { draft } = await req.json();
-    const draftNumber = await createInvoiceNumber(user.id);
-    const invoice = await createOrUpdateInvoice(null, user.id, {
+    const draftNumber = draft.number
+      ? draft.number
+      : await createInvoiceNumber(user.id);
+    const id = draft.id || null;
+    console.log("id", id);
+    const invoice = await createOrUpdateInvoice(id, user.id, {
       ...draft,
       number: draftNumber,
     });

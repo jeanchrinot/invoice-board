@@ -1,7 +1,9 @@
 // hooks/useUser.ts
 import { useEffect, useState } from "react";
+import { useAssistantStore } from "@/stores/assistantStore";
+import { MonthlyUsage } from "@prisma/client";
 
-import { basicUsageLimit, guestUserLimit } from "@/config/user";
+import { guestUserLimit, usageLimits } from "@/config/user";
 
 type User = {
   id: string;
@@ -23,6 +25,9 @@ export function useUser() {
     invoices: 0,
     tokens: 0,
   });
+  const { setUsage } = useAssistantStore();
+  const [planName, setPlanName] = useState<string>("Free");
+  // const [usage, setUsage] = useState<MonthlyUsage>();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -30,8 +35,15 @@ export function useUser() {
         const res = await fetch("/api/user");
         if (!res.ok) throw new Error("Failed to fetch user");
         const data = await res.json();
+        console.log("user data", data);
         setUser(data.user);
-        setUsageLimit(basicUsageLimit);
+        setUsageLimit(
+          data.userPlan?.title
+            ? usageLimits[data.userPlan.title]
+            : usageLimits["Free"],
+        );
+        setUsage(data.usage);
+        setPlanName(data.userPlan?.title || "Free");
       } catch (err: any) {
         setError(err.message || "Something went wrong");
         setUser(null);
@@ -44,5 +56,5 @@ export function useUser() {
     fetchUser();
   }, []);
 
-  return { user, usageLimit, loading, error };
+  return { user, usageLimit, loading, error, planName };
 }

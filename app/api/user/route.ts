@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 
 import { prisma } from "@/lib/db";
+import { getUserSubscriptionPlan } from "@/lib/subscription";
+import { getCurrentMonthlyUsage } from "@/lib/user";
 
 export const GET = auth(async (req) => {
   if (!req.auth) {
@@ -9,11 +11,18 @@ export const GET = auth(async (req) => {
   }
 
   const currentUser = req.auth.user;
-  if (!currentUser) {
+  if (!currentUser || !currentUser.id) {
     return new Response("Invalid user", { status: 401 });
   }
 
-  return NextResponse.json({ user: currentUser }, { status: 200 });
+  // Get user montly usage
+  const usage = await getCurrentMonthlyUsage(currentUser.id);
+  const userPlan = await getUserSubscriptionPlan(currentUser.id);
+
+  return NextResponse.json(
+    { user: currentUser, usage, userPlan },
+    { status: 200 },
+  );
 });
 
 export const DELETE = auth(async (req) => {

@@ -60,6 +60,10 @@ export const InvoicesTable: React.FC<InvoicesTableProps> = ({
     useState<boolean>(false);
 
   const onEdit = (invoiceId: string) => {
+    window.location.href = `/dashboard/invoices/form/${invoiceId}`;
+  };
+
+  const onEditWithAI = (invoiceId: string) => {
     window.location.href = `/ai-assistant/${invoiceId}`;
   };
 
@@ -189,7 +193,7 @@ export const InvoicesTable: React.FC<InvoicesTableProps> = ({
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-400">
             <thead>
               <tr>
-                <th className="px-2 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                <th className="px-2 py-3 pl-5 text-left text-xs font-medium uppercase tracking-wider">
                   Invoice
                 </th>
                 <th className="px-2 py-3 text-left text-xs font-medium uppercase tracking-wider">
@@ -254,17 +258,23 @@ export const InvoicesTable: React.FC<InvoicesTableProps> = ({
                       <Button
                         variant="outline"
                         size="sm"
+                        onClick={() => onEditWithAI(invoice.id)}
+                      >
+                        <Bot className="mr-1 size-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => onEdit(invoice.id)}
                       >
-                        <Bot className="mr-1 size-4" /> Edit with AI
+                        <Edit className="mr-1 size-4" />
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => setShareInvoiceId(invoice.id)}
                       >
-                        <Share2 className="mr-1 h-3 w-3" /> Share
-                        <MoreHorizontal className="ml-1 h-3 w-3" />
+                        <Share2 className="mr-1 h-3 w-3" />
                       </Button>
                     </div>
                   </td>

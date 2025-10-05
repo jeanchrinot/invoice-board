@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { Invoice } from "@/types/invoice";
 import { useUser } from "@/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,9 +26,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-const InvoicePreview: React.FC = () => {
+interface InvoicePreviewProps {
+  invoice: Partial<Invoice> | Invoice | null;
+  isGenerating: boolean;
+}
+
+const InvoicePreview: React.FC<InvoicePreviewProps> = ({
+  invoice,
+  isGenerating,
+}) => {
   const invoiceRef = useRef<HTMLDivElement>(null);
-  const { currentInvoice, isGenerating } = useAssistantStore();
   const { user } = useUser();
 
   const [openAuthDialog, setOpenAuthDialog] = useState(false);
@@ -65,7 +73,7 @@ const InvoicePreview: React.FC = () => {
     const imgHeight = pageHeight;
 
     pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-    pdf.save(`Invoice-${currentInvoice?.number}.pdf`);
+    pdf.save(`Invoice-${invoice?.number}.pdf`);
     element.style.display = "none";
   };
 
@@ -86,14 +94,10 @@ const InvoicePreview: React.FC = () => {
   };
 
   const handleCopyLink = async () => {
-    if (
-      currentInvoice?.status === "IN_PROGRESS" ||
-      !user?.id ||
-      !currentInvoice?.id
-    ) {
+    if (invoice?.status === "IN_PROGRESS" || !user?.id || !invoice?.id) {
       toast.error("Unable to copy link.");
     } else {
-      const link = `${window.location.origin}/invoice/${currentInvoice?.id}`;
+      const link = `${window.location.origin}/invoice/${invoice?.id}`;
       try {
         await navigator.clipboard.writeText(link);
         toast.success("Link copied to clipboard!");
@@ -106,14 +110,10 @@ const InvoicePreview: React.FC = () => {
   };
 
   const handleOpenLink = () => {
-    if (
-      currentInvoice?.status === "IN_PROGRESS" ||
-      !user?.id ||
-      !currentInvoice?.id
-    ) {
-      toast.error("Unable to copy link.");
+    if (invoice?.status === "IN_PROGRESS" || !user?.id || !invoice?.id) {
+      toast.error("Unable to open link.");
     } else {
-      const link = `${window.location.origin}/invoice/${currentInvoice?.id}`;
+      const link = `${window.location.origin}/invoice/${invoice?.id}`;
       window.open(link, "_blank");
     }
 
@@ -168,11 +168,7 @@ const InvoicePreview: React.FC = () => {
     );
   }
 
-  if (
-    !currentInvoice ||
-    !currentInvoice?.status ||
-    currentInvoice?.status === "IN_PROGRESS"
-  ) {
+  if (!invoice || !invoice?.status || invoice?.status === "IN_PROGRESS") {
     return (
       <div className="h-full w-full px-4 py-6">
         <div className="flex h-full items-center justify-center rounded-2xl border border-gray-300 bg-gradient-to-br from-gray-100/50 via-slate-100/50 to-gray-200/50 px-6 dark:border-gray-700/50 dark:from-gray-900/50 dark:via-slate-900/50 dark:to-gray-800/50">
@@ -205,15 +201,11 @@ const InvoicePreview: React.FC = () => {
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-2xl font-bold">INVOICE</h2>
-            <p className="text-blue-100">#{currentInvoice.number}</p>
+            <p className="text-blue-100">#{invoice.number}</p>
           </div>
           <div className="text-right">
-            <p className="text-blue-100">
-              Date: {formatDate(currentInvoice.date)}
-            </p>
-            <p className="text-blue-100">
-              Due: {formatDate(currentInvoice.dueDate)}
-            </p>
+            <p className="text-blue-100">Date: {formatDate(invoice.date)}</p>
+            <p className="text-blue-100">Due: {formatDate(invoice.dueDate)}</p>
           </div>
         </div>
       </div>
@@ -227,16 +219,14 @@ const InvoicePreview: React.FC = () => {
               Bill To:
             </h3>
             <div className="text-gray-600 dark:text-gray-400">
-              <p className="font-medium">{currentInvoice.billTo?.name}</p>
-              <p>{currentInvoice.billTo?.address}</p>
+              <p className="font-medium">{invoice.billTo?.name}</p>
+              <p>{invoice.billTo?.address}</p>
               <p>
-                {currentInvoice.billTo?.city
-                  ? `${currentInvoice.billTo?.city},`
-                  : ""}{" "}
-                {currentInvoice.billTo?.state} {currentInvoice.billTo?.zip}
+                {invoice.billTo?.city ? `${invoice.billTo?.city},` : ""}{" "}
+                {invoice.billTo?.state} {invoice.billTo?.zip}
               </p>
-              <p>{currentInvoice.billTo?.email}</p>
-              <p>{currentInvoice.billTo?.phone}</p>
+              <p>{invoice.billTo?.email}</p>
+              <p>{invoice.billTo?.phone}</p>
             </div>
           </div>
           <div>
@@ -244,16 +234,14 @@ const InvoicePreview: React.FC = () => {
               From:
             </h3>
             <div className="text-gray-600 dark:text-gray-400">
-              <p className="font-medium">{currentInvoice.from?.name}</p>
-              <p>{currentInvoice.from?.address}</p>
+              <p className="font-medium">{invoice.from?.name}</p>
+              <p>{invoice.from?.address}</p>
               <p>
-                {currentInvoice.from?.city
-                  ? `${currentInvoice.from?.city},`
-                  : ""}{" "}
-                {currentInvoice.from?.state} {currentInvoice.from?.zip}
+                {invoice.from?.city ? `${invoice.from?.city},` : ""}{" "}
+                {invoice.from?.state} {invoice.from?.zip}
               </p>
-              <p>{currentInvoice.from?.email}</p>
-              <p>{currentInvoice.from?.phone}</p>
+              <p>{invoice.from?.email}</p>
+              <p>{invoice.from?.phone}</p>
             </div>
           </div>
         </div>
@@ -282,7 +270,7 @@ const InvoicePreview: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentInvoice.items?.map((item, index) => (
+                {invoice.items?.map((item, index) => (
                   <tr
                     key={index}
                     className="border-b border-gray-200 dark:border-gray-700"
@@ -294,10 +282,10 @@ const InvoicePreview: React.FC = () => {
                       {item.quantity}
                     </td>
                     <td className="p-3 text-right text-gray-800 dark:text-gray-200">
-                      {currentInvoice.currency} {item.rate}
+                      {invoice.currency} {item.rate}
                     </td>
                     <td className="p-3 text-right text-gray-800 dark:text-gray-200">
-                      {currentInvoice.currency} {item.amount}
+                      {invoice.currency} {item.amount}
                     </td>
                   </tr>
                 ))}
@@ -314,46 +302,44 @@ const InvoicePreview: React.FC = () => {
                 Subtotal:
               </span>
               <span className="text-gray-800 dark:text-gray-200">
-                {currentInvoice.currency} {currentInvoice.subtotal}
+                {invoice.currency} {invoice.subtotal}
               </span>
             </div>
-            {currentInvoice.taxRate != null && currentInvoice.taxRate > 0 && (
+            {invoice.taxRate != null && invoice.taxRate > 0 && (
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-400">
-                  Tax ({currentInvoice.taxRate}%):
+                  Tax ({invoice.taxRate}%):
                 </span>
                 <span className="text-gray-800 dark:text-gray-200">
-                  {currentInvoice.currency} {currentInvoice.tax}
+                  {invoice.currency} {invoice.tax}
                 </span>
               </div>
             )}
             <div className="flex justify-between border-t border-gray-200 pt-2 text-lg font-semibold dark:border-gray-700">
               <span className="text-gray-800 dark:text-gray-200">Total:</span>
               <span className="text-gray-800 dark:text-gray-200">
-                {currentInvoice.currency} {currentInvoice.total}
+                {invoice.currency} {invoice.total}
               </span>
             </div>
           </div>
         </div>
 
         {/* Payment Information */}
-        {currentInvoice.paymentDetails && (
+        {invoice.paymentDetails && (
           <div>
             <h3 className="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
               Payment Information:
             </h3>
             <div className="text-gray-600 dark:text-gray-400">
-              <p className="whitespace-pre-wrap">
-                {currentInvoice.paymentDetails}
-              </p>
+              <p className="whitespace-pre-wrap">{invoice.paymentDetails}</p>
             </div>
           </div>
         )}
-        {currentInvoice.customNotes && (
+        {invoice.customNotes && (
           <div>
             <div className="text-gray-600 dark:text-gray-400">
-              {currentInvoice.customNotes && (
-                <p className="mt-2 italic">{currentInvoice.customNotes}</p>
+              {invoice.customNotes && (
+                <p className="mt-2 italic">{invoice.customNotes}</p>
               )}
             </div>
           </div>

@@ -45,7 +45,7 @@ export const pricingData: SubscriptionPlan[] = [
     limitations: ["No custom branding", "Limited team management"],
     prices: {
       monthly: 19,
-      yearly: 190,
+      yearly: 180,
     },
     stripeIds: {
       monthly: env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PLAN_ID,
@@ -70,7 +70,7 @@ export const pricingData: SubscriptionPlan[] = [
     limitations: [],
     prices: {
       monthly: 49,
-      yearly: 490,
+      yearly: 480,
     },
     stripeIds: {
       monthly: env.NEXT_PUBLIC_STRIPE_BUSINESS_MONTHLY_PLAN_ID,

@@ -391,12 +391,39 @@ export async function createOrUpdateInvoice(
   }
 
   // create new invoice
-  return prisma.invoice.create({
+  console.log("create new invoice", normalizedData);
+  const invoice = await prisma.invoice.create({
     data: {
       ...normalizedData,
       userId, // always required
     },
   });
+  // Update invoice usage
+  await incrementInvoiceUsage(userId);
+  return invoice;
+}
+
+export async function incrementInvoiceUsage(userId: string) {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1;
+
+  const usage = await prisma.monthlyUsage.upsert({
+    where: {
+      userId_year_month: { userId, year, month },
+    },
+    update: {
+      invoices: { increment: 1 },
+    },
+    create: {
+      userId,
+      year,
+      month,
+      invoices: 1,
+    },
+  });
+
+  return usage;
 }
 
 export async function cancelInvoiceDraft(draftId: string) {

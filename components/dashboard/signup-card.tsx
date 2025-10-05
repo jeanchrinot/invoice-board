@@ -30,13 +30,10 @@ export function SignUpCard() {
   );
 
   const invoiceProgress = Math.min(
-    (usage.invoicesCreated / usageLimit.invoices) * 100,
+    (usage.invoices / usageLimit.invoices) * 100,
     100,
   );
-  const tokenProgress = Math.min(
-    (usage.tokensUsed / usageLimit.tokens) * 100,
-    100,
-  );
+  const tokenProgress = Math.min((usage.tokens / usageLimit.tokens) * 100, 100);
 
   return (
     <Card className="md:max-xl:rounded-none md:max-xl:border-none md:max-xl:shadow-none">
@@ -62,7 +59,7 @@ export function SignUpCard() {
               <span
                 className={`font-semibold ${isInvoiceLimitReached ? "text-red-600" : "text-muted-foreground"}`}
               >
-                {usage.invoicesCreated}/{usageLimit.invoices}
+                {usage.invoices}/{usageLimit.invoices}
               </span>
             </div>
             <Progress
@@ -86,7 +83,7 @@ export function SignUpCard() {
               <span
                 className={`font-semibold ${isTokenLimitReached ? "text-red-600" : "text-muted-foreground"}`}
               >
-                {usage.tokensUsed.toLocaleString()}/{usageLimit.tokens}
+                {usage.tokens.toLocaleString()}/{usageLimit.tokens}
               </span>
             </div>
             <Progress

@@ -56,7 +56,7 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
                     <span className="mr-2 text-muted-foreground/80 line-through">
                       ${offer.prices.monthly}
                     </span>
-                    <span>${offer.prices.yearly / 12}</span>
+                    <span>${Math.round(offer.prices.yearly / 12)}</span>
                   </>
                 ) : (
                   `$${offer.prices.monthly}`
@@ -177,15 +177,15 @@ export function PricingCards({ userId, subscriptionPlan }: PricingCardsProps) {
           Email{" "}
           <a
             className="font-medium text-primary hover:underline"
-            href="mailto:support@saas-starter.com"
+            href="mailto:support@invoiceboard.com"
           >
-            support@saas-starter.com
+            support@invoiceboard.com
           </a>{" "}
-          for to contact our support team.
+          to contact our support team.
           <br />
-          <strong>
+          {/* <strong>
             You can test the subscriptions and won&apos;t be charged.
-          </strong>
+          </strong> */}
         </p>
       </section>
     </MaxWidthWrapper>

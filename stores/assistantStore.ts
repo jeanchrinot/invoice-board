@@ -1,3 +1,4 @@
+import { MonthlyUsage } from "@prisma/client";
 import { nanoid } from "nanoid";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -12,9 +13,8 @@ export interface ChatMessage {
 }
 
 interface Usage {
-  tokensUsed: number;
-  invoicesCreated: number;
-  lastReset: number;
+  tokens: number;
+  invoices: number;
 }
 
 interface AssistantStore {
@@ -37,6 +37,7 @@ interface AssistantStore {
 
   // Usage tracking
   usage: Usage;
+  setUsage: (usage: Usage) => void;
   addTokens: (count: number) => void;
   incrementInvoicesCreated: (invoice: Invoice) => void;
 
@@ -72,7 +73,7 @@ export const useAssistantStore = create<AssistantStore>()(
         set((state) => ({
           invoices: [...state.invoices, invoice],
         })),
-
+      setUsage: (usage) => set({ usage: usage }),
       mergeInvoice: (partial) =>
         set((state) => {
           const prevInvoice = state.currentInvoice || {};
@@ -101,15 +102,14 @@ export const useAssistantStore = create<AssistantStore>()(
       setIsGenerating: (val) => set({ isGenerating: val }),
 
       usage: {
-        tokensUsed: 0,
-        invoicesCreated: 0,
-        lastReset: Date.now(),
+        tokens: 0,
+        invoices: 0,
       },
       addTokens: (count) =>
         set((state) => ({
           usage: {
             ...state.usage,
-            tokensUsed: state.usage.tokensUsed + count,
+            tokens: state.usage.tokens + count,
           },
         })),
       incrementInvoicesCreated: (invoice: Invoice) => {
@@ -127,7 +127,7 @@ export const useAssistantStore = create<AssistantStore>()(
             invoices: [...state.invoices, invoice],
             usage: {
               ...state.usage,
-              invoicesCreated: state.usage.invoicesCreated + 1,
+              invoices: state.usage.invoices + 1,
             },
           };
         });
@@ -158,11 +158,11 @@ export const useAssistantStore = create<AssistantStore>()(
       //   const now = Date.now();
       //   const { usage } = get();
       //   if (!usage.lastReset) {
-      //     const { invoicesCreated, tokensUsed } = get().usage;
+      //     const { invoices, tokens } = get().usage;
       //     set({
       //       usage: {
-      //         invoicesCreated: invoicesCreated,
-      //         tokensUsed: tokensUsed,
+      //         invoices: invoices,
+      //         tokens: tokens,
       //         lastReset: now,
       //       },
       //     });
@@ -176,8 +176,8 @@ export const useAssistantStore = create<AssistantStore>()(
       //       invoices: [],
       //       conversationId: nanoid(),
       //       usage: {
-      //         invoicesCreated: 0,
-      //         tokensUsed: 0,
+      //         invoices: 0,
+      //         tokens: 0,
       //         lastReset: now,
       //       },
       //     });
@@ -186,14 +186,14 @@ export const useAssistantStore = create<AssistantStore>()(
 
       isInvoiceLimitReached: (usageLimit: UsageLimit) => {
         // get().resetIfExpired();
-        const { invoicesCreated } = get().usage;
-        return invoicesCreated >= usageLimit.invoices;
+        const { invoices } = get().usage;
+        return invoices >= usageLimit.invoices;
       },
 
       isTokenLimitReached: (usageLimit: UsageLimit) => {
         // get().resetIfExpired();
-        const { tokensUsed } = get().usage;
-        return tokensUsed >= usageLimit.tokens;
+        const { tokens } = get().usage;
+        return tokens >= usageLimit.tokens;
       },
     }),
     {

@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useAssistantStore } from "@/stores/assistantStore";
 import { useChat } from "@ai-sdk/react";
 import clsx from "clsx";
+import { Bot } from "lucide-react";
 import { nanoid } from "nanoid";
 
 import { useUser } from "@/hooks/use-user";
@@ -25,6 +26,7 @@ const AIAssistant = () => {
 
   const {
     messages: storedMessages,
+    setMessages,
     currentInvoice,
     conversationId,
     setCurrentInvoice,
@@ -40,8 +42,6 @@ const AIAssistant = () => {
   const params = useParams();
   const invoiceId = params?.invoiceId as string | undefined;
 
-  console.log("conversationId", conversationId);
-
   const fetchInvoice = async (invoiceId: string) => {
     try {
       const response = await fetch(`/api/private/invoice/${invoiceId}`);
@@ -50,7 +50,6 @@ const AIAssistant = () => {
       }
       const data = await response.json();
 
-      console.log("invoice", data);
       if (data?.id) {
         setIsGenerating(true);
         setCurrentInvoice(data);
@@ -75,7 +74,6 @@ const AIAssistant = () => {
       });
       if (res.ok) {
         const data = await res.json();
-        console.log("saved data:", data);
         setCurrentInvoice(data);
         if (data.id) {
           //Redirect to invoice page
@@ -125,24 +123,22 @@ const AIAssistant = () => {
     maxSteps: 10,
     body: { draft: currentInvoice },
     onFinish: (message, options) => {
-      console.log("message", message);
-      console.log("options", options);
-      if (message?.id && message?.role && message?.content) {
-        appendMessage({
-          id: message.id,
-          role: message.role,
-          content: message.content,
-        });
-      }
+      // if (message?.id && message?.role && message?.content) {
+      //   appendMessage({
+      //     id: message.id,
+      //     role: message.role,
+      //     content: message.content,
+      //   });
+      // }
 
       if (options?.usage?.totalTokens) {
         addTokens(options.usage.totalTokens);
         saveTokens(options.usage.totalTokens);
       }
 
-      if (options?.finishReason) {
-        console.log("options?.finishReason", options?.finishReason);
-      }
+      // if (options?.finishReason) {
+      //   console.log("options?.finishReason", options?.finishReason);
+      // }
 
       if (message?.role === "assistant" && message.parts) {
         setIsGenerating(false);
@@ -197,12 +193,6 @@ const AIAssistant = () => {
         method: "POST",
         body: JSON.stringify({ tokens: tokens }),
       });
-      // if (res.ok) {
-      //   const data = await res.json();
-      //   console.log("saved tokens:", data);
-      // } else {
-      //   console.log("Unable to save tokens:", res.status);
-      // }
     } catch (error) {
       console.log("unable to save tokens...", error);
     }
@@ -221,11 +211,11 @@ const AIAssistant = () => {
     if (!input.trim()) return;
 
     // Append user message to Zustand store before sending
-    appendMessage({
-      id: nanoid(),
-      role: "user",
-      content: input,
-    });
+    // appendMessage({
+    //   id: nanoid(),
+    //   role: "user",
+    //   content: input,
+    // });
 
     // Call the original useChat handleSubmit to actually send the message
     await originalHandleSubmit(e);
@@ -235,30 +225,40 @@ const AIAssistant = () => {
   //     useChat({ maxSteps: 10 });
 
   const handleVoiceRecord = (transcript: string) => {
-    console.log("Voice recording:", transcript);
     setInput(transcript);
   };
 
   const handleQuickReply = (reply: string) => {
-    if (isTokenLimitReached) return;
+    console.log("reply", reply);
+    console.log("isTokenLimitReached", isTokenLimitReached);
+    // if (isTokenLimitReached) return;
+    console.log("reply again", reply);
     if (!reply.trim()) return;
 
+    console.log("I'M here");
+
     // Append user message to Zustand store before sending
-    appendMessage({
-      id: nanoid(),
-      role: "user",
-      content: reply,
-    });
+    // appendMessage({
+    //   id: nanoid(),
+    //   role: "user",
+    //   content: reply,
+    // });
 
     append({
       role: "user",
       content: reply,
     });
+    console.log("I'M here too");
+  };
+
+  const onCloseChatUI = () => {
+    setMobileTab("preview");
   };
 
   useEffect(() => {
-    console.log("messages", messages);
-    // setMessages(messages); // Sync with your custom state
+    if (messages.length > 0) {
+      setMessages(messages);
+    }
   }, [messages]);
 
   const chatMessages = messages;
@@ -283,6 +283,7 @@ const AIAssistant = () => {
             handleInputChange={handleInputChange}
             isLoading={isLoading}
             status={status}
+            onClose={onCloseChatUI}
           />
         </div>
 
@@ -299,6 +300,14 @@ const AIAssistant = () => {
             />
           </div>
         </div>
+        {mobileTab !== "chat" && (
+          <div
+            onClick={() => setMobileTab("chat")}
+            className="fixed bottom-3 right-3 flex size-12 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 md:hidden"
+          >
+            <Bot className="size-6 text-white" />
+          </div>
+        )}
       </div>
     </div>
   );

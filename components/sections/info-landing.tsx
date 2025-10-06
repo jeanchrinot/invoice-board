@@ -47,15 +47,22 @@ export default function InfoLanding({
             reverse ? "order-1" : "order-2",
           )}
         >
-          <div className="aspect-video">
-            <Image
-              className="size-full object-cover object-center"
-              src={data.image}
-              alt={data.title}
-              width={1000}
-              height={500}
-              priority={true}
-            />
+          <div className="relative flex justify-center md:justify-end">
+            {/* Gradient card behind the image */}
+            <div className="absolute right-8 top-8 -z-10 h-80 w-80 rounded-3xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-400 opacity-40 blur-2xl"></div>
+
+            <div className="relative overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-black/5 dark:bg-gray-900 dark:ring-white/10">
+              <div className="p-4">
+                <Image
+                  src="/_static/demo/chat-invoice-preview.png"
+                  alt="Invoice Preview"
+                  width={1092}
+                  height={630}
+                  className="rounded-xl object-cover"
+                  priority
+                />
+              </div>
+            </div>
           </div>
         </div>
       </MaxWidthWrapper>

@@ -47,7 +47,7 @@ export function UpgradeCard() {
 
   return (
     <Card className="md:max-xl:rounded-none md:max-xl:border-none md:max-xl:shadow-none">
-      <CardHeader className="pb-3 md:max-xl:px-2">
+      <CardHeader className="space-y-1 p-3 pb-3 md:p-4">
         <div className="flex items-center gap-2">
           {planName === "Free" && (
             <Sparkles className="size-4 text-[hsl(262_81%_58%)]" />
@@ -68,7 +68,7 @@ export function UpgradeCard() {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-4 md:max-xl:px-2">
+      <CardContent className="space-y-4 p-3 pt-0 md:p-4">
         {/* Usage Progress */}
         <div className="space-y-3">
           <div className="space-y-1.5">

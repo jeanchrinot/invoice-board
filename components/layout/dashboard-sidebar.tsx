@@ -34,6 +34,27 @@ interface DashboardSidebarProps {
   links: SidebarNavItem[];
 }
 
+const Logo = () => {
+  return (
+    <Link href="/" className="flex items-center space-x-1.5">
+      <Image
+        src="/InvoiceBoard-Logo.png"
+        className="hidden w-[170px] dark:block"
+        width={500}
+        height={94}
+        alt="InvoiceBoard Dark"
+      />
+      <Image
+        src="/InvoiceBoard-Logo-Light.png"
+        className="w-[170px] dark:hidden"
+        width={500}
+        height={94}
+        alt="InvoiceBoard Light"
+      />
+    </Link>
+  );
+};
+
 export function DashboardSidebar({ links }: DashboardSidebarProps) {
   const path = usePathname();
   const { user } = useUser();
@@ -48,27 +69,6 @@ export function DashboardSidebar({ links }: DashboardSidebarProps) {
   useEffect(() => {
     setIsSidebarExpanded(!isTablet);
   }, [isTablet]);
-
-  const Logo = () => {
-    return (
-      <Link href="/" className="flex items-center space-x-1.5">
-        <Image
-          src="/InvoiceBoard-Logo.png"
-          className="hidden w-[170px] dark:block"
-          width={500}
-          height={94}
-          alt="InvoiceBoard Dark"
-        />
-        <Image
-          src="/InvoiceBoard-Logo-Light.png"
-          className="w-[170px] dark:hidden"
-          width={500}
-          height={94}
-          alt="InvoiceBoard Light"
-        />
-      </Link>
-    );
-  };
 
   const Icon = () => {
     return (
@@ -233,21 +233,13 @@ export function MobileSheetSidebar({ links }: DashboardSidebarProps) {
             <span className="sr-only">Toggle navigation menu</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="flex flex-col p-0">
+        <SheetContent side="left" className="flex flex-col bg-background p-0">
           <ScrollArea className="h-full overflow-y-auto">
             <div className="flex h-screen flex-col">
               <nav className="flex flex-1 flex-col gap-y-8 p-6 text-lg font-medium">
-                <Link
-                  href="#"
-                  className="flex items-center gap-2 text-lg font-semibold"
-                >
-                  <Icons.logo className="size-6" />
-                  <span className="font-urban text-xl font-bold">
-                    {siteConfig.name}
-                  </span>
-                </Link>
+                <Logo />
 
-                <ProjectSwitcher large />
+                {/* <ProjectSwitcher large /> */}
 
                 {links.map((section) => (
                   <section

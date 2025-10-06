@@ -168,7 +168,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
     );
   }
 
-  if (!invoice || !invoice?.status || invoice?.status === "IN_PROGRESS") {
+  if (!invoice || !invoice?.status) {
     return (
       <div className="h-full w-full px-4 py-6">
         <div className="flex h-full items-center justify-center rounded-2xl border border-gray-300 bg-gradient-to-br from-gray-100/50 via-slate-100/50 to-gray-200/50 px-6 dark:border-gray-700/50 dark:from-gray-900/50 dark:via-slate-900/50 dark:to-gray-800/50">
@@ -195,7 +195,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
   }
 
   const InvoiceContent = () => (
-    <div className="h-full w-full bg-white dark:bg-gray-900">
+    <div className="flex h-full w-full min-w-[500px] flex-col bg-white dark:bg-gray-900">
       {/* Invoice Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white">
         <div className="flex items-start justify-between">
@@ -213,7 +213,7 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
       {/* Invoice Content */}
       <div className="space-y-6 p-6">
         {/* Bill To and From Section */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-2 gap-6 overflow-auto md:grid-cols-2">
           <div>
             <h3 className="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
               Bill To:
@@ -345,15 +345,19 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
           </div>
         )}
       </div>
+
+      <div className="mt-10 items-center space-y-6 p-6 text-center text-muted-foreground">
+        Created with https://www.invoiceboard.com
+      </div>
     </div>
   );
 
   return (
-    <div className="relative">
+    <div className="relative overflow-hidden">
       {/* Visible Invoice */}
       <div
         ref={invoiceRef}
-        className="mx-auto h-[100vh] max-w-7xl overflow-y-auto bg-white pb-4 dark:bg-gray-900"
+        className="mx-auto h-screen w-screen max-w-7xl bg-white pb-4 dark:bg-gray-900 md:w-full"
       >
         {/* Action Buttons */}
         <div className="flex justify-end space-x-3 bg-gray-50 p-2 dark:bg-gray-800/50">
@@ -372,7 +376,9 @@ const InvoicePreview: React.FC<InvoicePreviewProps> = ({
             <span>Download</span>
           </button>
         </div>
-        <InvoiceContent />
+        <div className="mb-4 h-full w-full overflow-auto pb-10">
+          <InvoiceContent />
+        </div>
       </div>
 
       {/* Hidden Export Version */}

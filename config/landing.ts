@@ -2,51 +2,80 @@ import { FeatureLdg, InfoLdg, TestimonialType } from "types";
 
 export const infos: InfoLdg[] = [
   {
-    title: "Empower your projects",
+    title: "Create invoices in seconds",
     description:
-      "Unlock the full potential of your projects with our open-source SaaS platform. Collaborate seamlessly, innovate effortlessly, and scale limitlessly.",
-    image: "/_static/illustrations/work-from-home.jpg",
+      "Save hours with AI-powered invoice generation. Simply describe your work, and our assistant drafts a complete, professional invoice ready to review, edit, and send.",
+    image: "/_static/demo/chat-invoice-preview.png",
     list: [
       {
-        title: "Collaborative",
-        description: "Work together with your team members in real-time.",
-        icon: "laptop",
-      },
-      {
-        title: "Innovative",
-        description: "Stay ahead of the curve with access constant updates.",
-        icon: "settings",
-      },
-      {
-        title: "Scalable",
+        title: "AI-Powered",
         description:
-          "Our platform offers the scalability needed to adapt to your needs.",
-        icon: "search",
+          "Generate invoices automatically with OpenAI—no manual typing required.",
+        icon: "bot",
+      },
+      {
+        title: "Accurate & Fast",
+        description:
+          "From description to detailed line items in seconds, with smart tax and total calculations.",
+        icon: "zap",
+      },
+      {
+        title: "Customizable",
+        description:
+          "Easily adjust line items, descriptions, and design before saving or sharing.",
+        icon: "edit",
       },
     ],
   },
   {
-    title: "Seamless Integration",
+    title: "Flexible for every freelancer and team",
     description:
-      "Integrate our open-source SaaS seamlessly into your existing workflows. Effortlessly connect with your favorite tools and services for a streamlined experience.",
-    image: "/_static/illustrations/work-from-home.jpg",
+      "Whether you’re a solo freelancer or managing a team, Build&Bill adapts to your workflow. Create unlimited manual invoices or scale up with powerful automation.",
+    image: "/_static/illustrations/team-collaboration.jpg",
     list: [
       {
-        title: "Flexible",
+        title: "Manual or AI Invoices",
         description:
-          "Customize your integrations to fit your unique requirements.",
-        icon: "laptop",
+          "Choose between full manual control or AI-assisted creation for maximum efficiency.",
+        icon: "file",
       },
       {
-        title: "Efficient",
-        description: "Streamline your processes and reducing manual effort.",
-        icon: "search",
+        title: "Client Management",
+        description:
+          "Store client info, notes, and history in one place for faster billing and follow-ups.",
+        icon: "users",
       },
       {
-        title: "Reliable",
+        title: "Team Collaboration",
         description:
-          "Rely on our robust infrastructure and comprehensive documentation.",
-        icon: "settings",
+          "Invite teammates, assign roles, and share invoice access with secure permissions.",
+        icon: "users",
+      },
+    ],
+  },
+  {
+    title: "Professional delivery & integrations",
+    description:
+      "Deliver branded invoices and connect your workflow with CRMs or accounting tools. Build&Bill helps you look professional while saving time.",
+    image: "/_static/illustrations/branding-integration.jpg",
+    list: [
+      {
+        title: "Custom Branding",
+        description:
+          "Add your logo and colors to invoices — available for Business plans.",
+        icon: "brush",
+      },
+      {
+        title: "Instant Sharing",
+        description:
+          "Export PDFs or share secure links instantly with your clients.",
+        icon: "share",
+      },
+      {
+        title: "Integrations",
+        description:
+          "Connect with accounting tools or CRMs to automate your workflow.",
+        icon: "link",
       },
     ],
   },
@@ -54,46 +83,46 @@ export const infos: InfoLdg[] = [
 
 export const features: FeatureLdg[] = [
   {
-    title: "Feature 1",
+    title: "AI Invoice Assistant",
     description:
-      "Amet praesentium deserunt ex commodi tempore fuga voluptatem. Sit, sapiente.",
+      "Automatically generate invoices from a simple project description. Powered by OpenAI, optimized for freelancers and agencies.",
     link: "/",
-    icon: "nextjs",
+    icon: "bot",
   },
   {
-    title: "Feature 2",
+    title: "Manual Invoice Form",
     description:
-      "Amet praesentium deserunt ex commodi tempore fuga voluptatem. Sit, sapiente.",
+      "Prefer full control? Use our intuitive manual form to create detailed invoices without AI tokens.",
     link: "/",
-    icon: "google",
+    icon: "file",
   },
   {
-    title: "Feature 3",
+    title: "Client Management",
     description:
-      "Amet praesentium deserunt ex commodi tempore fuga voluptatem. Sit, sapiente.",
+      "Save client details, add notes, view invoice history, and manage relationships in one dashboard.",
     link: "/",
-    icon: "gitHub",
+    icon: "users",
   },
   {
-    title: "Feature 4",
+    title: "Custom Templates & Branding",
     description:
-      "Amet praesentium deserunt ex commodi tempore fuga voluptatem. Sit, sapiente.",
+      "Use modern invoice designs or upload your own branding to create personalized, professional documents.",
     link: "/",
-    icon: "laptop",
+    icon: "brush",
   },
   {
-    title: "Feature 5",
+    title: "PDF & Share Links",
     description:
-      "Amet praesentium deserunt ex commodi tempore fuga voluptatem. Sit, sapiente.",
+      "Instantly export invoices as PDFs or share them securely via custom links — no watermarks on paid plans.",
     link: "/",
-    icon: "user",
+    icon: "share",
   },
   {
-    title: "Feature 6",
+    title: "Integrations & Teams",
     description:
-      "Amet praesentium deserunt ex commodi tempore fuga voluptatem. Sit, sapiente.",
+      "Connect Build&Bill with your tools and collaborate with your team using advanced permissions.",
     link: "/",
-    icon: "copy",
+    icon: "link",
   },
 ];
 

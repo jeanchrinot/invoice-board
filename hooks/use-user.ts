@@ -35,7 +35,6 @@ export function useUser() {
         const res = await fetch("/api/user");
         if (!res.ok) throw new Error("Failed to fetch user");
         const data = await res.json();
-        console.log("user data", data);
         setUser(data.user);
         setUsageLimit(
           data.userPlan?.title

@@ -33,18 +33,18 @@ export default async function Dashboard({ children }: ProtectedLayoutProps) {
       <DashboardSidebar links={filteredLinks} />
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        {/* <header className="sticky top-0 z-50 flex h-14 bg-background px-4 lg:h-[60px] xl:px-8">
+        <header className="sticky top-0 z-50 flex h-14 bg-background px-4 dark:bg-black/20 md:hidden lg:h-[60px] xl:px-8">
           <MaxWidthWrapper className="flex max-w-7xl items-center gap-x-3 px-0">
             <MobileSheetSidebar links={filteredLinks} />
 
             <div className="w-full flex-1">
-              <SearchCommand links={filteredLinks} />
+              {/* <SearchCommand links={filteredLinks} /> */}
             </div>
 
             <ModeToggle />
-            <UserAccountNav />
+            <UserAccountNav isSidebarExpanded={false} />
           </MaxWidthWrapper>
-        </header> */}
+        </header>
 
         <main className="flex-1 overflow-x-hidden">
           <MaxWidthWrapper className="flex h-full max-w-7xl flex-col gap-4 overflow-hidden px-0 lg:gap-6">

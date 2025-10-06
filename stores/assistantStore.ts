@@ -21,7 +21,8 @@ interface AssistantStore {
   // UI state
   mobileTab: "chat" | "preview";
   setMobileTab: (tab: "chat" | "preview") => void;
-
+  tryItPrompt: string;
+  setTryItPrompt: (prompt: string) => void;
   // Invoice generation state
   invoices: Partial<Invoice>[] | Invoice[];
   currentInvoice: Partial<Invoice> | Invoice | null;
@@ -66,6 +67,8 @@ export const useAssistantStore = create<AssistantStore>()(
     (set, get) => ({
       mobileTab: "chat",
       setMobileTab: (tab) => set({ mobileTab: tab }),
+      tryItPrompt: "",
+      setTryItPrompt: (prompt) => set({ tryItPrompt: prompt }),
       invoices: [],
       currentInvoice: null,
       setCurrentInvoice: (invoice) => set({ currentInvoice: invoice }),
@@ -77,6 +80,12 @@ export const useAssistantStore = create<AssistantStore>()(
       mergeInvoice: (partial) =>
         set((state) => {
           const prevInvoice = state.currentInvoice || {};
+
+          if (prevInvoice.id && prevInvoice.id !== partial.id) {
+            return {
+              currentInvoice: partial,
+            };
+          }
 
           return {
             currentInvoice: {

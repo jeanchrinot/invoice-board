@@ -24,7 +24,7 @@ export default function RegisterPage() {
         <div className="w-full max-w-md">
           {/* Mobile Header (visible on small screens) */}
           <div className="mb-8 text-center lg:hidden">
-            <Icons.logo className="mx-auto mb-4 size-8" />
+            {/* <Icons.logo className="mx-auto mb-4 size-8" /> */}
             <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
               Get Started Today
             </h1>
@@ -36,9 +36,9 @@ export default function RegisterPage() {
           <div className="rounded-xl border border-gray-200 bg-white p-8 shadow-lg dark:border-gray-800 dark:bg-black/20 dark:shadow-2xl">
             {/* Header */}
             <div className="mb-6 text-center">
-              <div className="hidden lg:block">
+              {/* <div className="hidden lg:block">
                 <Icons.logo className="mx-auto mb-4 size-8" />
-              </div>
+              </div> */}
               <h2 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
                 Create Your Account
               </h2>
@@ -84,7 +84,7 @@ export default function RegisterPage() {
             </p>
 
             {/* Quick Benefits */}
-            <AuthQuickBenefits />
+            {/* <AuthQuickBenefits /> */}
           </div>
 
           {/* Trust Indicators */}

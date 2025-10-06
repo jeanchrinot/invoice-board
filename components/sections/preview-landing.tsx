@@ -9,11 +9,11 @@ export default function PreviewLanding() {
         <div className="rounded-xl md:bg-muted/30 md:p-3.5 md:ring-1 md:ring-inset md:ring-border">
           <div className="relative aspect-video overflow-hidden rounded-xl border md:rounded-lg">
             <Image
-              className="size-full object-cover object-center dark:opacity-85 dark:invert"
-              src="/_static/blog/blog-post-3.jpg"
+              className="size-full object-cover object-center dark:opacity-85"
+              src="/_static/demo/chat-invoice-preview.png"
               alt="preview landing"
-              width={2000}
-              height={1000}
+              width={1092}
+              height={630}
               priority={true}
             />
           </div>

@@ -37,9 +37,6 @@ export default function LoginPage() {
           <div className="rounded-xl border border-gray-200 bg-white p-8 shadow-lg dark:border-gray-800 dark:bg-black/20 dark:shadow-2xl">
             {/* Header */}
             <div className="mb-6 text-center">
-              <div className="hidden lg:block">
-                <Icons.logo className="mx-auto mb-4 size-8" />
-              </div>
               <h2 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
                 Sign In To Your Account
               </h2>
@@ -76,7 +73,7 @@ export default function LoginPage() {
               </p>
             </div>
 
-            <AuthQuickBenefits />
+            {/* <AuthQuickBenefits /> */}
           </div>
 
           {/* Security Notice */}

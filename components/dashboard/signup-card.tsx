@@ -17,8 +17,6 @@ import { Progress } from "@/components/ui/progress";
 export function SignUpCard() {
   const { usage } = useAssistantStore();
 
-  console.log("usage", usage);
-
   const { usageLimit } = useUser();
 
   const isTokenLimitReached = useAssistantStore((s) =>
@@ -106,7 +104,7 @@ export function SignUpCard() {
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
             <div className="text-xs leading-relaxed text-red-700 dark:text-red-300">
               <span className="font-semibold">Token limit reached.</span> Sign
-              up for unlimited invoices and 500K monthly tokens.
+              up for unlimited invoices and 20K monthly tokens.
             </div>
           </div>
         )}

@@ -58,14 +58,14 @@ export function NavBar({ scroll = false }: NavBarProps) {
           <Link href="/" className="flex items-center space-x-1.5">
             <Image
               src="/InvoiceBoard-Logo.png"
-              className="hidden w-[200px] dark:block"
+              className="hidden w-[150px] dark:block md:w-[200px]"
               width={500}
               height={94}
               alt="InvoiceBoard Dark"
             />
             <Image
               src="/InvoiceBoard-Logo-Light.png"
-              className="w-[200px] dark:hidden"
+              className="w-[150px] dark:hidden md:w-[200px]"
               width={500}
               height={94}
               alt="InvoiceBoard Light"
@@ -146,7 +146,9 @@ export function NavBar({ scroll = false }: NavBarProps) {
           ) : (
             <Skeleton className="hidden h-9 w-28 rounded-full lg:flex" />
           )}
-          <ModeToggle />
+          <div className="hidden md:block">
+            <ModeToggle />
+          </div>
         </div>
       </MaxWidthWrapper>
     </header>

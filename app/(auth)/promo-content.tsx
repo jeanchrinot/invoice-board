@@ -6,7 +6,7 @@ const AuthPromoContent = () => {
       <div className="absolute inset-0 bg-black/20"></div>
       <div className="relative z-10 mx-auto flex max-w-lg flex-col justify-center p-12 text-white">
         <div className="mb-8">
-          <Icons.logo className="mb-6 size-10 text-white" />
+          {/* <Icons.logo className="mb-6 size-10 text-white" /> */}
           <h1 className="mb-4 text-4xl font-bold leading-tight">
             Professional Invoicing Made Simple
           </h1>
@@ -79,7 +79,7 @@ const AuthPromoContent = () => {
         </div>
 
         {/* Recent Update */}
-        <div className="rounded-lg border border-white/20 bg-white/10 p-6 backdrop-blur-sm">
+        {/* <div className="rounded-lg border border-white/20 bg-white/10 p-6 backdrop-blur-sm">
           <div className="flex items-start space-x-3">
             <div className="mt-1 rounded-full bg-green-400 p-1">
               <svg
@@ -105,7 +105,7 @@ const AuthPromoContent = () => {
               <p className="mt-2 text-xs text-blue-200">Released this week</p>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Decorative Elements */}

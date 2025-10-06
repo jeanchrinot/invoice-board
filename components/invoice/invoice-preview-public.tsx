@@ -3,7 +3,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useAssistantStore } from "@/stores/assistantStore";
 import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
 import {

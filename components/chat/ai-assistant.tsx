@@ -6,7 +6,6 @@ import { useAssistantStore } from "@/stores/assistantStore";
 import { useChat } from "@ai-sdk/react";
 import clsx from "clsx";
 import { Bot } from "lucide-react";
-import { nanoid } from "nanoid";
 
 import { useUser } from "@/hooks/use-user";
 

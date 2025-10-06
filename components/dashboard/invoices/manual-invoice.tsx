@@ -2,11 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useAssistantStore } from "@/stores/assistantStore";
 import { useInvoiceStore } from "@/stores/invoiceStore";
-import { useChat } from "@ai-sdk/react";
 import clsx from "clsx";
-import { nanoid } from "nanoid";
 
 import { useUser } from "@/hooks/use-user";
 import InvoicePreview from "@/components/chat/invoice-preview";

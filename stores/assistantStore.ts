@@ -1,4 +1,3 @@
-import { MonthlyUsage } from "@prisma/client";
 import { nanoid } from "nanoid";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";

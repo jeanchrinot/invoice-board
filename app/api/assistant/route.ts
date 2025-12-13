@@ -13,9 +13,6 @@ export const POST = auth(async (req) => {
 
   const invoiceTools = createInvoiceTools(user?.id, draft?.id);
 
-  console.log("messages", messages);
-  console.log("route::draft:", draft);
-
   const result = await streamText({
     model: openai("gpt-4o"),
     messages,

@@ -246,7 +246,6 @@ export function createInvoiceTools(
           if (userId && draftId) {
             draft = await createOrUpdateInvoice(draftId, userId, draft);
           }
-          console.log("draft", draft);
           return {
             draft,
           };
@@ -293,8 +292,6 @@ export function createInvoiceTools(
               finalizedInvoice,
             );
           }
-
-          console.log("tools::invoice:", invoice);
 
           return { invoice };
         } catch (error) {

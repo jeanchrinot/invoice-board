@@ -43,14 +43,14 @@ export function SiteFooter({ className }: React.HTMLAttributes<HTMLElement>) {
           </span>
 
           <p className="text-sm text-muted-foreground">
-            Built by{" "}
+            Watch me build on{" "}
             <Link
-              href={"https://www.velombe.com"}
+              href={"https://www.x.com/jeanchrinot"}
               target="_blank"
               rel="noreferrer"
               className="font-medium underline underline-offset-4"
             >
-              velombe
+              X
             </Link>
           </p>
 

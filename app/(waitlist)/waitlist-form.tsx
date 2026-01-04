@@ -51,7 +51,7 @@ export function WaitlistForm({
 
   if (status === "success") {
     return (
-      <div className="rounded-xl border border-indigo-500/20 p-4 text-center text-green-600 animate-in zoom-in-95 dark:text-green-400">
+      <div className="rounded-xl border border-primary/20 p-4 text-center text-green-600 animate-in zoom-in-95 dark:text-green-400">
         <p className="font-semibold">You're on the list! 🚀</p>
         <p className="text-sm opacity-90">Watch your inbox for updates.</p>
       </div>

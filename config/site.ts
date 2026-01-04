@@ -4,10 +4,11 @@ import { env } from "@/env.mjs";
 const site_url = env.NEXT_PUBLIC_APP_URL;
 
 export const siteConfig: SiteConfig = {
-  name: "Freelancer AI Assistant",
-  description: "Create professional invoices in minutes with the help of AI.",
+  name: "Create Invoices at the Speed of Thought",
+  description:
+    "Stop manually filling out rows and columns. Simply type a request, and InvoiceBoard's AI generates professional, tax-ready invoices, tracks payments, and chases clients for you.",
   url: site_url,
-  ogImage: `${site_url}/_static/og.jpg`,
+  ogImage: `${site_url}/_static/og.png`,
   links: {
     twitter: "https://x.com/JeanChrinot",
     github: "#",

@@ -13,9 +13,9 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    /* Primary Violet - Kept exactly as requested */
-    --primary: 262 81% 58%; /* #7c3aed */
-    --primary-muted: 262 35% 65%;
+    /* Primary Green (#18cb96) -> 162 79% 45% */
+    --primary: 162 79% 45%;
+    --primary-muted: 162 35% 65%;
     --primary-foreground: 0 0% 98%;
 
     --secondary: 240 4.8% 95.9%;
@@ -32,16 +32,16 @@
 
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 262 81% 58%;
+    --ring: 162 79% 45%;
 
     --radius: 0.5rem;
 
-    /* Chart colors remain the same */
-    --chart-1: 262 81% 58%;
-    --chart-2: 262 70% 65%;
-    --chart-3: 262 60% 72%;
-    --chart-4: 262 50% 79%;
-    --chart-5: 262 40% 85%;
+    /* Chart colors updated to match green theme */
+    --chart-1: 162 79% 45%;
+    --chart-2: 162 60% 55%;
+    --chart-3: 162 50% 65%;
+    --chart-4: 162 40% 75%;
+    --chart-5: 162 30% 85%;
   }
 
   .dark {
@@ -56,9 +56,9 @@
     --popover: 0 0% 3.5%;
     --popover-foreground: 0 0% 98%;
 
-    /* Primary Violet - Kept exactly as requested */
-    --primary: 262 81% 58%;
-    --primary-muted: 262 45% 45%;
+    /* Primary Green (#18cb96) */
+    --primary: 162 79% 45%;
+    --primary-muted: 162 45% 45%;
     --primary-foreground: 0 0% 98%;
 
     /* Dark Neutral Secondary */
@@ -76,13 +76,13 @@
 
     --border: 0 0% 12%;
     --input: 0 0% 12%;
-    --ring: 262 81% 58%;
+    --ring: 162 79% 45%;
 
-    --chart-1: 262 81% 58%;
-    --chart-2: 262 70% 65%;
-    --chart-3: 262 60% 72%;
-    --chart-4: 262 50% 79%;
-    --chart-5: 262 40% 85%;
+    --chart-1: 162 79% 45%;
+    --chart-2: 162 60% 55%;
+    --chart-3: 162 50% 65%;
+    --chart-4: 162 40% 75%;
+    --chart-5: 162 30% 85%;
   }
 }
 
@@ -115,13 +115,13 @@
   }
 
   .bg-gradient {
-    @apply bg-gradient-to-r from-blue-500 to-purple-600;
+    @apply bg-gradient-to-r from-emerald-500 to-teal-600;
   }
 }
 
-/* Kept your existing text gradient */
+/* Updated to Green Gradient (kept class name to prevent breaking existing components) */
 .text-gradient_indigo-purple {
-  background: linear-gradient(90deg, #6366f1 0%, rgb(168 85 247 / 0.8) 100%);
+  background: linear-gradient(90deg, #18cb96 0%, #0d9488 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

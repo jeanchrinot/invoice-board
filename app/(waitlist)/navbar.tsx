@@ -50,7 +50,7 @@ export function NavBar({ scroll = false }: NavBarProps) {
       }`}
     >
       <MaxWidthWrapper
-        className="flex h-14 items-center justify-between py-4"
+        className="flex h-16 items-center justify-between py-4"
         large={documentation}
       >
         <div className="flex gap-6 md:gap-10">
@@ -58,15 +58,15 @@ export function NavBar({ scroll = false }: NavBarProps) {
             <Image
               src="/InvoiceBoard-Logo.png"
               className="hidden w-[150px] dark:block md:w-[200px]"
-              width={500}
-              height={94}
+              width={604}
+              height={219}
               alt="InvoiceBoard Dark"
             />
             <Image
               src="/InvoiceBoard-Logo-Light.png"
               className="w-[150px] dark:hidden md:w-[200px]"
-              width={500}
-              height={94}
+              width={604}
+              height={219}
               alt="InvoiceBoard Light"
             />
           </Link>

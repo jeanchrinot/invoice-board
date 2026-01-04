@@ -5,9 +5,9 @@ import FeatureHighlights from "./feature-highlights";
 import HeroLanding from "./hero";
 
 export const metadata = constructMetadata({
-  title:
-    "Free AI Invoice Assistant For Freelancers and Small Businesses | InvoiceBoard",
-  description: "Free AI Invoice Assistant For Freelancers and Small Businesses",
+  title: "Create Invoices at the Speed of Thought | InvoiceBoard",
+  description:
+    "Stop manually filling out rows and columns. Simply type a request, and InvoiceBoard's AI generates professional, tax-ready invoices, tracks payments, and chases clients for you.",
 });
 
 export default function IndexPage() {

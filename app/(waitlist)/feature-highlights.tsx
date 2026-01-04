@@ -80,15 +80,12 @@ const features = [
 
 export default function FeatureHighlights() {
   return (
-    <section
-      id="features"
-      className="bg-gradient-to-b from-background to-muted/40 py-24 sm:py-32"
-    >
+    <section id="features" className="py-24 sm:py-32">
       <div className="container mx-auto px-4 md:px-6">
         <HeaderSection
           label="Features"
           title="Everything you need to get paid."
-          subtitle="InvoiceBoard replaces your spreadsheet, your reminder tool, and your payment processor. All in one board."
+          subtitle="InvoiceBoard gathers invoicing, reminders, and payments into a single, smart board."
         />
 
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -99,10 +96,10 @@ export default function FeatureHighlights() {
                 className="group relative overflow-hidden rounded-2xl border bg-background/50 p-5 transition-colors duration-300 hover:border-primary/50 md:p-8"
                 key={feature.title}
               >
-                {/* Gradient Glow Effect on Hover */}
+                {/* Gradient Glow Effect on Hover - Updated to Green/Teal */}
                 <div
                   aria-hidden="true"
-                  className="absolute inset-0 aspect-video -translate-y-1/2 rounded-full border bg-gradient-to-b from-indigo-500/80 to-purple-500/80 opacity-0 blur-2xl duration-300 group-hover:-translate-y-1/4 group-hover:opacity-15 dark:from-indigo-400 dark:to-purple-600 dark:opacity-0 dark:group-hover:opacity-20"
+                  className="absolute inset-0 aspect-video -translate-y-1/2 rounded-full border bg-gradient-to-b from-emerald-500/80 to-teal-500/80 opacity-0 blur-2xl duration-300 group-hover:-translate-y-1/4 group-hover:opacity-15 dark:from-emerald-400 dark:to-teal-600 dark:opacity-0 dark:group-hover:opacity-20"
                 />
 
                 <div className="relative">
